@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -45,14 +46,15 @@ class LocatorView(
     }
 
     override fun onDraw(canvas: Canvas) {
+        // scene
         canvas.save()
 
-        canvas.translate((storedTranslationX + activeTranslationX), (storedTranslationY + activeTranslationY))
-
-        canvas.drawLine(0.0f, 0.0f, 100.0f, 0.0f, debugPaint)
-        canvas.drawLine(0.0f, 0.0f, 0.0f, 100.0f, debugPaint)
+        canvas.translate(worldToScreen(storedTranslationX + activeTranslationX), worldToScreen(storedTranslationY + activeTranslationY))
 
         canvas.scale(prescaler * scale, prescaler * scale)
+
+        canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
+        canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         for (point in points) {
             canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x, point.y - 10.0f, debugPaint)
@@ -62,10 +64,15 @@ class LocatorView(
 
         canvas.restore()
 
+        // overlay
         val lineX = width - LINE_PADDING
         val lineY = height - LINE_PADDING
         canvas.drawLine(lineX - LINE_LENGTH, lineY, lineX, lineY, debugPaint)
         canvas.drawText("${screenToWorld(LINE_LENGTH)}", lineX - LINE_LENGTH, lineY - 100.0f, debugPaint)
+    }
+
+    private fun worldToScreen(coordWorld: Float): Float {
+        return coordWorld * prescaler * scale
     }
 
     private fun screenToWorld(coordScreen: Float): Float {
@@ -73,11 +80,11 @@ class LocatorView(
     }
 
     private fun screenToWorldX(coordScreen: Float): Float {
-        return screenToWorld(coordScreen)
+        return screenToWorld(coordScreen) - (storedTranslationX + activeTranslationX)
     }
 
     private fun screenToWorldY(coordScreen: Float): Float {
-        return screenToWorld(coordScreen)
+        return screenToWorld(coordScreen) - (storedTranslationY + activeTranslationY)
     }
 
     private var isTranslating = false
@@ -92,7 +99,7 @@ class LocatorView(
     private var scale = 1.0f
 
     private fun updateTranslation(event: MotionEvent, isUpEvent: Boolean) {
-        val newIsTranslating = /*event.pointerCount == 1 && */!isUpEvent
+        val newIsTranslating = event.pointerCount == 1 && !isUpEvent
 
         if (newIsTranslating == isTranslating)
             return
@@ -107,6 +114,7 @@ class LocatorView(
             storedTranslationY += activeTranslationY
             activeTranslationX = 0.0f
             activeTranslationY = 0.0f
+            notifyListener()
         }
     }
 
@@ -122,8 +130,9 @@ class LocatorView(
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_POINTER_DOWN -> updateTranslation(event, false)
             MotionEvent.ACTION_MOVE -> {
                 if (isTranslating) {
-                    activeTranslationX = event.x - startX
-                    activeTranslationY = event.y - startY
+                    activeTranslationX = screenToWorld(event.x - startX)
+                    activeTranslationY = screenToWorld(event.y - startY)
+                    notifyListener()
                 }
             }
         }
@@ -155,18 +164,28 @@ class LocatorView(
             if (p0 == null)
                 return false
             scale = (scale * p0.scaleFactor).clamp(MIN_SCALE, MAX_SCALE)
+            notifyListener()
             return true
         }
+    }
+
+    fun notifyListener() {
+        listener?.invoke(prescaler * scale, storedTranslationX + activeTranslationX, storedTranslationY + activeTranslationY)
     }
 
     inner class LongPressListener : GestureDetector.SimpleOnGestureListener() {
         override fun onLongPress(e: MotionEvent?) {
             if (e != null) {
-                points.add(PointF(screenToWorldX(e.x), screenToWorldY(e.y)))
+                val x = screenToWorldX(e.x)
+                val y = screenToWorldY(e.y)
+                Log.d("TAGGG", "${e.x},${e.y} -> $x,$y")
+                points.add(PointF(x, y))
                 invalidate()
             }
         }
     }
+
+    var listener: ((scale: Float, translationX: Float, translationY: Float) -> Unit)? = null
 }
 
 fun Float.clamp(min: Float, max: Float): Float {

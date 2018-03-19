@@ -12,5 +12,9 @@ class MainActivity : Activity() {
         buttonReset.setOnClickListener {
             locatorView.reset()
         }
+        locatorView.listener = {
+            scale, translationX, translationY ->
+            label.text = "$scale, $translationX, $translationY"
+        }
     }
 }
