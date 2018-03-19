@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -33,11 +32,13 @@ class LocatorView(
         canvas.save()
 
         canvas.scale(scale, scale)
-        canvas.translate((storedTranslationX + activeTranslationX) / scale, (storedTranslationY + activeTranslationY) /scale)
+        canvas.translate((storedTranslationX + activeTranslationX) / scale, (storedTranslationY + activeTranslationY) / scale)
         canvas.drawCircle(50f, 50f, 100f, circlePaint)
 
         canvas.restore()
     }
+
+    private var isTranslating = false
 
     private var startX: Float = 0.0f
     private var startY: Float = 0.0f
@@ -46,30 +47,37 @@ class LocatorView(
     private var activeTranslationX: Float = 0.0f
     private var activeTranslationY: Float = 0.0f
 
+    private fun updateTranslation(event: MotionEvent, isUpEvent: Boolean) {
+        var newIsTranslating = /*event.pointerCount == 1 && */!isUpEvent
+
+        if (newIsTranslating == isTranslating)
+            return
+
+        isTranslating = newIsTranslating
+
+        if (isTranslating) {
+            startX = event.x
+            startY = event.y
+        } else {
+            storedTranslationX += activeTranslationX
+            storedTranslationY += activeTranslationY
+            activeTranslationX = 0.0f
+            activeTranslationY = 0.0f
+        }
+    }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        //scaleDetector.onTouchEvent(event)
         if (event == null)
             return false
 
         when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                startX = event.x
-                startY = event.y
-            }
-            MotionEvent.ACTION_UP -> {
-                storedTranslationX += activeTranslationX
-                storedTranslationY += activeTranslationY
-                activeTranslationX = 0.0f
-                activeTranslationY = 0.0f
-            }
+            MotionEvent.ACTION_UP -> updateTranslation(event, true)
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_POINTER_DOWN -> updateTranslation(event, false)
             MotionEvent.ACTION_MOVE -> {
-                if (event.pointerCount == 1) {
+                if (isTranslating) {
                     activeTranslationX = event.x - startX
                     activeTranslationY = event.y - startY
                 }
-            }
-            MotionEvent.ACTION_POINTER_DOWN -> Log.d("TAGGG", "ACTION_POINTER_DOWN")
-            MotionEvent.ACTION_POINTER_UP -> {
             }
         }
         scaleDetector.onTouchEvent(event)
