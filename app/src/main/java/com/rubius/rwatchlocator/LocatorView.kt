@@ -13,14 +13,18 @@ import android.view.View
  *
  */
 class LocatorView(
-        context: Context,
-        attrs: AttributeSet?) : View(context, attrs) {
+    context: Context,
+    attrs: AttributeSet?) : View(context, attrs) {
     private val circlePaint = Paint()
     private val debugPaint = Paint()
     private val points: ArrayList<PointF> = ArrayList()
+    private val database = Database()
 
     private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
     private val longPressDetector = GestureDetector(context, LongPressListener())
+
+    private val drawMatrix = Matrix()
+    private val drawPath = Path()
 
     companion object {
         const val MIN_SCALE = 0.1f
@@ -29,16 +33,9 @@ class LocatorView(
         const val LINE_LENGTH = 100.0f // pixels
     }
 
-    val p = Path()
-
     init {
         circlePaint.color = Color.RED
         debugPaint.color = Color.GREEN
-        p.moveTo(0.0f, 0.0f)
-        p.lineTo(40.0f, 0.0f)
-        p.lineTo(50.0f, 50.0f)
-        p.lineTo(0.0f, 40.0f)
-        //\p.lineTo(0.0f, 0.0f)
         points.add(PointF(50.0f, 50.0f))
     }
 
@@ -49,15 +46,15 @@ class LocatorView(
 
     override fun onDraw(canvas: Canvas) {
         // scene
-        canvas.save()
-
         val totalScale = getTotalScale()
 
-        val matrix = Matrix() // TODO: resource-intensive
-        matrix.preScale(totalScale, totalScale)
-        matrix.preTranslate(getTotalTranslationX(), getTotalTranslationY())
+        drawMatrix.reset()
+        drawMatrix.setTranslate(getTotalTranslationX(), getTotalTranslationY())
+        drawMatrix.postScale(totalScale, totalScale)
 
-        canvas.matrix = matrix
+        canvas.save()
+
+        canvas.matrix = drawMatrix
 
         for (point in points) {
             canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x, point.y - 10.0f, debugPaint)
@@ -70,9 +67,10 @@ class LocatorView(
 
         canvas.restore()
 
-        val d = Path() // TODO: resource-intensive
-        p.transform(matrix, d)
-        canvas.drawPath(d, debugPaint)
+        for (room in database.getRooms()) {
+            room.path.transform(drawMatrix, drawPath)
+            canvas.drawPath(drawPath, debugPaint)
+        }
 
         // overlay
         val lineX = width - LINE_PADDING
