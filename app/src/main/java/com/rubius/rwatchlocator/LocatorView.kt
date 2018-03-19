@@ -17,6 +17,7 @@ class LocatorView(
     attrs: AttributeSet?) : View(context, attrs) {
     private val circlePaint = Paint()
     private val debugPaint = Paint()
+    private val roomPaint = Paint()
     private val points: ArrayList<PointF> = ArrayList()
     private val database = Database()
 
@@ -36,12 +37,15 @@ class LocatorView(
     init {
         circlePaint.color = Color.RED
         debugPaint.color = Color.GREEN
-        points.add(PointF(50.0f, 50.0f))
+        roomPaint.color = Color.BLACK
+        roomPaint.style = Paint.Style.STROKE
+        roomPaint.strokeWidth = 2.0f
+        points.add(PointF(4.0f, 4.0f))
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        prescaler = (Math.min(w, h) / LINE_LENGTH)
+        prescaler = (Math.min(w, h) / LINE_LENGTH) * 10.0f
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -52,25 +56,23 @@ class LocatorView(
         drawMatrix.setTranslate(getTotalTranslationX(), getTotalTranslationY())
         drawMatrix.postScale(totalScale, totalScale)
 
+        for (room in database.getRooms()) {
+            room.path.transform(drawMatrix, drawPath)
+            canvas.drawPath(drawPath, roomPaint)
+        }
+
         canvas.save()
 
         canvas.matrix = drawMatrix
 
         for (point in points) {
-            canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x, point.y - 10.0f, debugPaint)
-            canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x - 10.0f, point.y, debugPaint)
-            canvas.drawCircle(point.x, point.y, 10f, circlePaint)
+            canvas.drawCircle(point.x, point.y, 0.5f, circlePaint)
         }
 
         canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
         canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         canvas.restore()
-
-        for (room in database.getRooms()) {
-            room.path.transform(drawMatrix, drawPath)
-            canvas.drawPath(drawPath, debugPaint)
-        }
 
         // overlay
         val lineX = width - LINE_PADDING
