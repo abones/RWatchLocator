@@ -38,8 +38,9 @@ class LocatorView(
         circlePaint.color = Color.RED
         debugPaint.color = Color.GREEN
         roomPaint.color = Color.BLACK
-        roomPaint.style = Paint.Style.STROKE
+        //roomPaint.style = Paint.Style.STROKE
         roomPaint.strokeWidth = 2.0f
+        roomPaint.shader =  LinearGradient(0.0f, 0.0f, 50.0f, 50.0f, Color.RED, Color.GREEN, Shader.TileMode.MIRROR)
         points.add(PointF(4.0f, 4.0f))
     }
 
@@ -58,6 +59,7 @@ class LocatorView(
 
         for (room in database.getRooms()) {
             room.path.transform(drawMatrix, drawPath)
+            roomPaint.shader.setLocalMatrix(drawMatrix)
             canvas.drawPath(drawPath, roomPaint)
         }
 
@@ -73,6 +75,7 @@ class LocatorView(
         canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         canvas.restore()
+
 
         // overlay
         val lineX = width - LINE_PADDING
