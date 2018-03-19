@@ -1,10 +1,7 @@
 package com.rubius.rwatchlocator
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PointF
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
@@ -32,9 +29,16 @@ class LocatorView(
         const val LINE_LENGTH = 100.0f // pixels
     }
 
+    val p = Path()
+
     init {
         circlePaint.color = Color.RED
         debugPaint.color = Color.GREEN
+        p.moveTo(0.0f, 0.0f)
+        p.lineTo(40.0f, 0.0f)
+        p.lineTo(50.0f, 50.0f)
+        p.lineTo(0.0f, 40.0f)
+        //\p.lineTo(0.0f, 0.0f)
         points.add(PointF(50.0f, 50.0f))
     }
 
@@ -48,9 +52,12 @@ class LocatorView(
         canvas.save()
 
         val totalScale = getTotalScale()
-        canvas.scale(totalScale, totalScale)
 
-        canvas.translate(getTotalTranslationX(), getTotalTranslationY())
+        val matrix = Matrix() // TODO: resource-intensive
+        matrix.preScale(totalScale, totalScale)
+        matrix.preTranslate(getTotalTranslationX(), getTotalTranslationY())
+
+        canvas.matrix = matrix
 
         for (point in points) {
             canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x, point.y - 10.0f, debugPaint)
@@ -62,6 +69,10 @@ class LocatorView(
         canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         canvas.restore()
+
+        val d = Path() // TODO: resource-intensive
+        p.transform(matrix, d)
+        canvas.drawPath(d, debugPaint)
 
         // overlay
         val lineX = width - LINE_PADDING
