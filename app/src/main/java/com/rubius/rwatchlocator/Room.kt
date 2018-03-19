@@ -16,6 +16,7 @@ class Room(val name: String, points: List<PointF>) {
             else
                 path.lineTo(point.x, point.y)
         }
+        path.close()
     }
 
 }
