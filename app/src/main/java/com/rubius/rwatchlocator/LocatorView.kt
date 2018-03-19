@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PointF
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -15,27 +17,67 @@ import android.view.View
 class LocatorView(
         context: Context,
         attrs: AttributeSet?) : View(context, attrs) {
-    private val circlePaint: Paint = Paint()
+    private val circlePaint = Paint()
+    private val debugPaint = Paint()
+    private val points: ArrayList<PointF> = ArrayList()
+
     private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
-    private var scale = 1.0f
+    private val longPressDetector = GestureDetector(context, LongPressListener())
 
     companion object {
         const val MIN_SCALE = 0.1f
         const val MAX_SCALE = 100.0f
+        const val LINE_PADDING = 100.0f // pixels
+        const val LINE_LENGTH = 100.0f // pixels
     }
 
     init {
         circlePaint.color = Color.RED
+        debugPaint.color = Color.GREEN
+        points.add(PointF(50.0f, 50.0f))
+    }
+
+    var prescaler = 1.0f
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        prescaler = (Math.min(w, h) / LINE_LENGTH)
     }
 
     override fun onDraw(canvas: Canvas) {
         canvas.save()
 
-        canvas.scale(scale, scale)
-        canvas.translate((storedTranslationX + activeTranslationX) / scale, (storedTranslationY + activeTranslationY) / scale)
-        canvas.drawCircle(50f, 50f, 100f, circlePaint)
+        canvas.translate((storedTranslationX + activeTranslationX), (storedTranslationY + activeTranslationY))
+
+        canvas.drawLine(0.0f, 0.0f, 100.0f, 0.0f, debugPaint)
+        canvas.drawLine(0.0f, 0.0f, 0.0f, 100.0f, debugPaint)
+
+        canvas.scale(prescaler * scale, prescaler * scale)
+
+        for (point in points) {
+            canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x, point.y - 10.0f, debugPaint)
+            canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x - 10.0f, point.y, debugPaint)
+            canvas.drawCircle(point.x, point.y, 10f, circlePaint)
+        }
 
         canvas.restore()
+
+        val lineX = width - LINE_PADDING
+        val lineY = height - LINE_PADDING
+        canvas.drawLine(lineX - LINE_LENGTH, lineY, lineX, lineY, debugPaint)
+        canvas.drawText("${screenToWorld(LINE_LENGTH)}", lineX - LINE_LENGTH, lineY - 100.0f, debugPaint)
+    }
+
+    private fun screenToWorld(coordScreen: Float): Float {
+        return coordScreen / (prescaler * scale)
+    }
+
+    private fun screenToWorldX(coordScreen: Float): Float {
+        return screenToWorld(coordScreen)
+    }
+
+    private fun screenToWorldY(coordScreen: Float): Float {
+        return screenToWorld(coordScreen)
     }
 
     private var isTranslating = false
@@ -47,8 +89,10 @@ class LocatorView(
     private var activeTranslationX: Float = 0.0f
     private var activeTranslationY: Float = 0.0f
 
+    private var scale = 1.0f
+
     private fun updateTranslation(event: MotionEvent, isUpEvent: Boolean) {
-        var newIsTranslating = /*event.pointerCount == 1 && */!isUpEvent
+        val newIsTranslating = /*event.pointerCount == 1 && */!isUpEvent
 
         if (newIsTranslating == isTranslating)
             return
@@ -69,6 +113,9 @@ class LocatorView(
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event == null)
             return false
+
+        if (longPressDetector.onTouchEvent(event))
+            return true
 
         when (event.actionMasked) {
             MotionEvent.ACTION_UP -> updateTranslation(event, true)
@@ -109,6 +156,15 @@ class LocatorView(
                 return false
             scale = (scale * p0.scaleFactor).clamp(MIN_SCALE, MAX_SCALE)
             return true
+        }
+    }
+
+    inner class LongPressListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onLongPress(e: MotionEvent?) {
+            if (e != null) {
+                points.add(PointF(screenToWorldX(e.x), screenToWorldY(e.y)))
+                invalidate()
+            }
         }
     }
 }
