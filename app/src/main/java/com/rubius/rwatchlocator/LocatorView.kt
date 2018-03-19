@@ -38,8 +38,6 @@ class LocatorView(
         points.add(PointF(50.0f, 50.0f))
     }
 
-    var prescaler = 1.0f
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         prescaler = (Math.min(w, h) / LINE_LENGTH)
@@ -49,18 +47,19 @@ class LocatorView(
         // scene
         canvas.save()
 
-        canvas.translate(worldToScreen(storedTranslationX + activeTranslationX), worldToScreen(storedTranslationY + activeTranslationY))
+        canvas.translate(worldToScreen(getTotalTranslationX()), worldToScreen(getTotalTranslationY()))
 
-        canvas.scale(prescaler * scale, prescaler * scale)
-
-        canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
-        canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
+        val totalScale = getTotalScale()
+        canvas.scale(totalScale, totalScale)
 
         for (point in points) {
             canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x, point.y - 10.0f, debugPaint)
             canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x - 10.0f, point.y, debugPaint)
             canvas.drawCircle(point.x, point.y, 10f, circlePaint)
         }
+
+        canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
+        canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         canvas.restore()
 
@@ -71,20 +70,27 @@ class LocatorView(
         canvas.drawText("${screenToWorld(LINE_LENGTH)}", lineX - LINE_LENGTH, lineY - 100.0f, debugPaint)
     }
 
+    private var prescaler = 1.0f
+    private var scale = 1.0f
+
+    private fun getTotalScale(): Float {
+        return prescaler * scale
+    }
+
     private fun worldToScreen(coordWorld: Float): Float {
-        return coordWorld * prescaler * scale
+        return coordWorld * getTotalScale()
     }
 
     private fun screenToWorld(coordScreen: Float): Float {
-        return coordScreen / (prescaler * scale)
+        return coordScreen / getTotalScale()
     }
 
     private fun screenToWorldX(coordScreen: Float): Float {
-        return screenToWorld(coordScreen) - (storedTranslationX + activeTranslationX)
+        return screenToWorld(coordScreen) - getTotalTranslationX()
     }
 
     private fun screenToWorldY(coordScreen: Float): Float {
-        return screenToWorld(coordScreen) - (storedTranslationY + activeTranslationY)
+        return screenToWorld(coordScreen) - (getTotalTranslationY())
     }
 
     private var isTranslating = false
@@ -95,8 +101,6 @@ class LocatorView(
     private var storedTranslationY: Float = 0.0f
     private var activeTranslationX: Float = 0.0f
     private var activeTranslationY: Float = 0.0f
-
-    private var scale = 1.0f
 
     private fun updateTranslation(event: MotionEvent, isUpEvent: Boolean) {
         val newIsTranslating = event.pointerCount == 1 && !isUpEvent
@@ -170,8 +174,12 @@ class LocatorView(
     }
 
     fun notifyListener() {
-        listener?.invoke(prescaler * scale, storedTranslationX + activeTranslationX, storedTranslationY + activeTranslationY)
+        listener?.invoke(getTotalScale(), getTotalTranslationX(), getTotalTranslationY())
     }
+
+    private fun getTotalTranslationY() = storedTranslationY + activeTranslationY
+
+    private fun getTotalTranslationX() = storedTranslationX + activeTranslationX
 
     inner class LongPressListener : GestureDetector.SimpleOnGestureListener() {
         override fun onLongPress(e: MotionEvent?) {
