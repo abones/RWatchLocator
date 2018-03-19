@@ -47,10 +47,10 @@ class LocatorView(
         // scene
         canvas.save()
 
-        canvas.translate(worldToScreen(getTotalTranslationX()), worldToScreen(getTotalTranslationY()))
-
         val totalScale = getTotalScale()
         canvas.scale(totalScale, totalScale)
+
+        canvas.translate(getTotalTranslationX(), getTotalTranslationY())
 
         for (point in points) {
             canvas.drawLine(point.x - 10.0f, point.y - 10.0f, point.x, point.y - 10.0f, debugPaint)
