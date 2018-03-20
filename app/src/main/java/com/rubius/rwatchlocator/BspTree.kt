@@ -38,7 +38,11 @@ class BspTree {
         }
 
         fun generateBsp(lines: List<NormalLine>): TreeNode? {
-            // TODO: exit condition
+            if (isConvex(lines)) {
+                val result = TreeNode()
+                result.lines.addAll(lines)
+                return result
+            }
 
             val split = getSplittingLine(lines) ?: return null
 
@@ -56,6 +60,21 @@ class BspTree {
             }
 
             return split
+        }
+
+        private fun isConvex(lines: List<NormalLine>): Boolean {
+            if (lines.isEmpty())
+                return false
+            var isPositive = false
+            for (i in 1 until lines.size) {
+                val crossSin = lines[i - 1].normal.crossSin(lines[i].normal)
+                if (i == 1)
+                    isPositive = crossSin >= 0
+                else
+                    if (crossSin >= 0 != isPositive)
+                        return false
+            }
+            return true
         }
     }
 }

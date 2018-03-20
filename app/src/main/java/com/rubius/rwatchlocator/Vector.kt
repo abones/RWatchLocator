@@ -18,6 +18,10 @@ class Vector(val x: Double, val y: Double) {
         return x * otherX + y * otherY
     }
 
+    fun crossSin(other: Vector): Double {
+        return (x * other.y - other.x * y) / (length * other.length)
+    }
+
     override fun toString(): String {
         return "Vector(x=$x, y=$y, length=$length)"
     }

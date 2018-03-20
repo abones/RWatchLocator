@@ -55,15 +55,15 @@ class BspTreeTest {
         ))
 
         assertLeaf(result!!)
-        Assert.assertEquals(3, result.lines.size)
+        Assert.assertEquals(2, result.lines.size)
     }
 
     @Test
     fun triangleBelongsInOneNode() {
         val result = BspTree.generateBsp(listOf(
             NormalLine(0.0, 0.0, 1.0, 0.0),
-            NormalLine(1.0, 0.0, 1.0, 1.0),
-            NormalLine(1.0, 1.0, 0.0, 0.0)
+            NormalLine(1.0, 0.0, 0.0, 1.0),
+            NormalLine(0.0, 1.0, 0.0, 0.0)
         ))
 
         assertLeaf(result!!)
