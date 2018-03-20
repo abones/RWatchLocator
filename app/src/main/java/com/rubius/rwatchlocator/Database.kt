@@ -1,6 +1,6 @@
 package com.rubius.rwatchlocator
 
-import android.graphics.PointF
+import com.snatik.polygon.Point
 
 /**
  *
@@ -11,194 +11,194 @@ class Database {
             Room(
                 "301",
                 listOf(
-                    PointF(0.0f, 7.0f),
-                    PointF(4.0f, 7.0f),
-                    PointF(4.0f, 14.0f),
-                    PointF(0.0f, 14.0f)
+                    Point(0.0, 7.0),
+                    Point(4.0, 7.0),
+                    Point(4.0, 14.0),
+                    Point(0.0, 14.0)
                 )
             ),
             Room(
                 "302",
                 listOf(
-                    PointF(0.0f, 0.0f),
-                    PointF(8.0f, 0.0f),
-                    PointF(8.0f, 7.0f),
-                    PointF(0.0f, 7.0f)
+                    Point(0.0, 0.0),
+                    Point(8.0, 0.0),
+                    Point(8.0, 7.0),
+                    Point(0.0, 7.0)
                 )
             ),
             Room(
                 "302a",
                 listOf(
-                    PointF(8.0f, 0.0f),
-                    PointF(10.0f, 0.0f),
-                    PointF(10.0f, 5.0f),
-                    PointF(8.0f, 5.0f)
+                    Point(8.0, 0.0),
+                    Point(10.0, 0.0),
+                    Point(10.0, 5.0),
+                    Point(8.0, 5.0)
                 )
             ),
             Room(
                 "302b",
                 listOf(
-                    PointF(8.0f, 5.0f),
-                    PointF(10.0f, 5.0f),
-                    PointF(10.0f, 7.0f),
-                    PointF(8.0f, 7.0f)
+                    Point(8.0, 5.0),
+                    Point(10.0, 5.0),
+                    Point(10.0, 7.0),
+                    Point(8.0, 7.0)
                 )
             ),
             Room(
                 "303",
                 listOf(
-                    PointF(10.0f, 0.0f),
-                    PointF(18.0f, 0.0f),
-                    PointF(18.0f, 7.0f),
-                    PointF(10.0f, 7.0f)
+                    Point(10.0, 0.0),
+                    Point(18.0, 0.0),
+                    Point(18.0, 7.0),
+                    Point(10.0, 7.0)
                 )
             ),
             Room(
                 "304a",
                 listOf(
-                    PointF(18.0f, 0.0f),
-                    PointF(22.0f, 0.0f),
-                    PointF(22.0f, 7.0f),
-                    PointF(18.0f, 7.0f)
+                    Point(18.0, 0.0),
+                    Point(22.0, 0.0),
+                    Point(22.0, 7.0),
+                    Point(18.0, 7.0)
                 )
             ),
             Room(
                 "304",
                 listOf(
-                    PointF(22.0f, 0.0f),
-                    PointF(26.0f, 0.0f),
-                    PointF(26.0f, 7.0f),
-                    PointF(22.0f, 7.0f)
+                    Point(22.0, 0.0),
+                    Point(26.0, 0.0),
+                    Point(26.0, 7.0),
+                    Point(22.0, 7.0)
                 )
             ),
             Room(
                 "305",
                 listOf(
-                    PointF(26.0f, 0.0f),
-                    PointF(30.0f, 0.0f),
-                    PointF(30.0f, 7.0f),
-                    PointF(26.0f, 7.0f)
+                    Point(26.0, 0.0),
+                    Point(30.0, 0.0),
+                    Point(30.0, 7.0),
+                    Point(26.0, 7.0)
                 )
             ),
             Room(
                 "306",
                 listOf(
-                    PointF(30.0f, 0.0f),
-                    PointF(45.0f, 0.0f),
-                    PointF(45.0f, 7.0f),
-                    PointF(30.0f, 7.0f)
+                    Point(30.0, 0.0),
+                    Point(45.0, 0.0),
+                    Point(45.0, 7.0),
+                    Point(30.0, 7.0)
                 )
             ),
             Room(
                 "H2",
                 listOf(
-                    PointF(10.0f, 7.0f),
-                    PointF(45.0f, 7.0f),
-                    PointF(45.0f, 11.0f),
-                    PointF(10.0f, 11.0f)
+                    Point(10.0, 7.0),
+                    Point(45.0, 7.0),
+                    Point(45.0, 11.0),
+                    Point(10.0, 11.0)
                 )
             ),
             Room(
                 "H2",
                 listOf(
-                    PointF(10.0f, 7.0f),
-                    PointF(45.0f, 7.0f),
-                    PointF(45.0f, 11.0f),
-                    PointF(10.0f, 11.0f)
+                    Point(10.0, 7.0),
+                    Point(45.0, 7.0),
+                    Point(45.0, 11.0),
+                    Point(10.0, 11.0)
                 )
             ),
             Room(
                 "H1",
                 listOf(
-                    PointF(4.0f, 7.0f),
-                    PointF(10.0f, 7.0f),
-                    PointF(10.0f, 11.0f),
-                    PointF(8.0f, 11.0f),
-                    PointF(8.0f, 14.0f),
-                    PointF(4.0f, 14.0f)
+                    Point(4.0, 7.0),
+                    Point(10.0, 7.0),
+                    Point(10.0, 11.0),
+                    Point(8.0, 11.0),
+                    Point(8.0, 14.0),
+                    Point(4.0, 14.0)
                 )
             ),
             Room(
                 "WC",
                 listOf(
-                    PointF(8.0f, 11.0f),
-                    PointF(10.0f, 11.0f),
-                    PointF(10.0f, 14.0f),
-                    PointF(8.0f, 14.0f)
+                    Point(8.0, 11.0),
+                    Point(10.0, 11.0),
+                    Point(10.0, 14.0),
+                    Point(8.0, 14.0)
                 )
             ),
             Room(
                 "H3",
                 listOf(
-                    PointF(-3.0f, 14.0f),
-                    PointF(10.0f, 14.0f),
-                    PointF(10.0f, 18.0f),
-                    PointF(-3.0f, 18.0f)
+                    Point(-3.0, 14.0),
+                    Point(10.0, 14.0),
+                    Point(10.0, 18.0),
+                    Point(-3.0, 18.0)
                 )
             ),
             Room(
                 "311",
                 listOf(
-                    PointF(10.0f, 11.0f),
-                    PointF(14.0f, 11.0f),
-                    PointF(14.0f, 18.0f),
-                    PointF(10.0f, 18.0f)
+                    Point(10.0, 11.0),
+                    Point(14.0, 11.0),
+                    Point(14.0, 18.0),
+                    Point(10.0, 18.0)
                 )
             ),
             Room(
                 "310",
                 listOf(
-                    PointF(14.0f, 11.0f),
-                    PointF(22.0f, 11.0f),
-                    PointF(22.0f, 14.0f),
-                    PointF(18.0f, 14.0f),
-                    PointF(18.0f, 18.0f),
-                    PointF(14.0f, 18.0f)
+                    Point(14.0, 11.0),
+                    Point(22.0, 11.0),
+                    Point(22.0, 14.0),
+                    Point(18.0, 14.0),
+                    Point(18.0, 18.0),
+                    Point(14.0, 18.0)
                 )
             ),
             Room(
                 "310a",
                 listOf(
-                    PointF(18.0f, 14.0f),
-                    PointF(22.0f, 14.0f),
-                    PointF(22.0f, 18.0f),
-                    PointF(18.0f, 18.0f)
+                    Point(18.0, 14.0),
+                    Point(22.0, 14.0),
+                    Point(22.0, 18.0),
+                    Point(18.0, 18.0)
                 )
             ),
             Room(
                 "309",
                 listOf(
-                    PointF(22.0f, 11.0f),
-                    PointF(34.0f, 11.0f),
-                    PointF(34.0f, 18.0f),
-                    PointF(22.0f, 18.0f)
+                    Point(22.0, 11.0),
+                    Point(34.0, 11.0),
+                    Point(34.0, 18.0),
+                    Point(22.0, 18.0)
                 )
             ),
             Room(
                 "308",
                 listOf(
-                    PointF(34.0f, 11.0f),
-                    PointF(38.0f, 11.0f),
-                    PointF(38.0f, 18.0f),
-                    PointF(34.0f, 18.0f)
+                    Point(34.0, 11.0),
+                    Point(38.0, 11.0),
+                    Point(38.0, 18.0),
+                    Point(34.0, 18.0)
                 )
             ),
             Room(
                 "H4",
                 listOf(
-                    PointF(38.0f, 11.0f),
-                    PointF(42.0f, 11.0f),
-                    PointF(42.0f, 18.0f),
-                    PointF(38.0f, 18.0f)
+                    Point(38.0, 11.0),
+                    Point(42.0, 11.0),
+                    Point(42.0, 18.0),
+                    Point(38.0, 18.0)
                 )
             ),
             Room(
                 "WC",
                 listOf(
-                    PointF(42.0f, 11.0f),
-                    PointF(45.0f, 11.0f),
-                    PointF(45.0f, 18.0f),
-                    PointF(42.0f, 18.0f)
+                    Point(42.0, 11.0),
+                    Point(45.0, 11.0),
+                    Point(45.0, 18.0),
+                    Point(42.0, 18.0)
                 )
             )
         )

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RWatchLocator.iml" filepath="$PROJECT_DIR$/RWatchLocator.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/polygon-1.0.2/polygon-1.0.2.iml" filepath="$PROJECT_DIR$/polygon-1.0.2/polygon-1.0.2.iml" />
     </modules>
   </component>
 </project>
