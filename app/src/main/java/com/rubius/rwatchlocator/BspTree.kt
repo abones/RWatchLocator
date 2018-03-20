@@ -38,7 +38,7 @@ class BspTree {
         }
 
         fun generateBsp(lines: List<NormalLine>): TreeNode? {
-            if (isConvex(lines)) {
+            if (lines.size > 2 && isConvex(lines)) {
                 val result = TreeNode()
                 result.lines.addAll(lines)
                 return result
@@ -46,7 +46,6 @@ class BspTree {
 
             val split = getSplittingLine(lines) ?: return null
 
-            // TODO: optimize split.lines
             // TODO: split anything intersected
 
             if (split.pendingFront.size > 0) {

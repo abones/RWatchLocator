@@ -31,7 +31,7 @@ class BspTreeTest {
         Assert.assertEquals(1, result.lines.size)
     }
 
-    @Test
+    /*@Test
     fun joinsAdjacentLines() {
         val result = BspTree.generateBsp(listOf(
             NormalLine(0.0, 2.0, 0.0, 3.0),
@@ -45,17 +45,18 @@ class BspTreeTest {
         Assert.assertEquals(0.0, result.lines[0].startY)
         Assert.assertEquals(0.0, result.lines[0].endX)
         Assert.assertEquals(3.0, result.lines[0].endY)
-    }
+    }*/
 
     @Test
     fun convexBelongInOneNode() {
         val result = BspTree.generateBsp(listOf(
             NormalLine(1.0, 1.0, 0.0, 1.0), // \/ facing each other
+            NormalLine(0.0, 1.0, 0.0, 0.0), //
             NormalLine(0.0, 0.0, 1.0, 0.0)  // /\
         ))
 
         assertLeaf(result!!)
-        Assert.assertEquals(2, result.lines.size)
+        Assert.assertEquals(3, result.lines.size)
     }
 
     @Test
