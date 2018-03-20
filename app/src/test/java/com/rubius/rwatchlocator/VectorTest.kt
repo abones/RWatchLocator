@@ -34,7 +34,7 @@ class VectorTest {
     fun normalizedVectorHasUnitLength() {
         val vector = Vector(2.0, 2.0).normalize()
 
-        Assert.assertEquals(1.0, vector.length, 0.0)
+        Assert.assertEquals(1.0, vector.length, 0.0001)
     }
 
     @Test
@@ -54,7 +54,7 @@ class VectorTest {
 
         val dot = vector1.dot(vector2)
 
-        Assert.assertEquals(1.0, dot, 0.0)
+        Assert.assertEquals(1.0, dot, 0.0001)
     }
 
     @Test

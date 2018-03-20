@@ -15,13 +15,8 @@ class NormalLineTest {
     private val quadrant3Line = Line(Point(-2.0, -2.0), Point(-4.0, -4.0))
     private val quadrant4Line = Line(Point(-2.0, 2.0), Point(-4.0, 4.0))
 
-    @Test
-    fun zeroLineHasZeroNormal() {
-        val line = NormalLine(zeroLine)
-
-        Assert.assertEquals(0.0, line.normal.length)
-    }
-
+    private val UNIT_VECTOR_COORDINATE = Math.sqrt(0.5)
+    
     @Test
     fun lineNormalizesVector() {
         val line1 = NormalLine(quadrant1Line)
@@ -29,10 +24,10 @@ class NormalLineTest {
         val line3 = NormalLine(quadrant3Line)
         val line4 = NormalLine(quadrant4Line)
 
-        Assert.assertEquals(1.0, line1.normal.length)
-        Assert.assertEquals(1.0, line2.normal.length)
-        Assert.assertEquals(1.0, line3.normal.length)
-        Assert.assertEquals(1.0, line4.normal.length)
+        Assert.assertEquals(1.0, line1.normal.length, 0.0001)
+        Assert.assertEquals(1.0, line2.normal.length, 0.0001)
+        Assert.assertEquals(1.0, line3.normal.length, 0.0001)
+        Assert.assertEquals(1.0, line4.normal.length, 0.0001)
     }
 
     @Test
@@ -42,16 +37,16 @@ class NormalLineTest {
         val line3 = NormalLine(quadrant3Line)
         val line4 = NormalLine(quadrant4Line)
 
-        Assert.assertEquals(-1.0, line1.normal.x)
-        Assert.assertEquals(1.0, line1.normal.y)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line1.normal.x, 0.0001)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line1.normal.y, 0.0001)
 
-        Assert.assertEquals(1.0, line2.normal.x)
-        Assert.assertEquals(1.0, line2.normal.y)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line2.normal.x, 0.0001)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line2.normal.y, 0.0001)
 
-        Assert.assertEquals(1.0, line3.normal.x)
-        Assert.assertEquals(-1.0, line3.normal.y)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line3.normal.x, 0.0001)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line3.normal.y, 0.0001)
 
-        Assert.assertEquals(-1.0, line4.normal.x)
-        Assert.assertEquals(-1.0, line4.normal.y)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.x, 0.0001)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.y, 0.0001)
     }
 }
