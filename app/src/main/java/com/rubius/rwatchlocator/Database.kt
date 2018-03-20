@@ -6,7 +6,20 @@ import com.snatik.polygon.Point
  *
  */
 class Database {
+    val anchorPoints = arrayListOf(AnchorPoint(4.0, 4.0))
+
     fun getRooms(): List<Room> {
+        val x = Room(
+            "303",
+            listOf(
+                Point(10.0, 0.0),
+                Point(18.0, 0.0),
+                Point(18.0, 7.0),
+                Point(10.0, 7.0)
+            )
+        )
+        x.anchorPoints.add(anchorPoints[0])
+
         return listOf(
             Room(
                 "301",
@@ -44,15 +57,7 @@ class Database {
                     Point(8.0, 7.0)
                 )
             ),
-            Room(
-                "303",
-                listOf(
-                    Point(10.0, 0.0),
-                    Point(18.0, 0.0),
-                    Point(18.0, 7.0),
-                    Point(10.0, 7.0)
-                )
-            ),
+            x,
             Room(
                 "304a",
                 listOf(

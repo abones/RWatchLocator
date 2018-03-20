@@ -18,7 +18,6 @@ class LocatorView(
     private val circlePaint = Paint()
     private val debugPaint = Paint()
     private val roomPaint = Paint()
-    private val points: ArrayList<PointF> = ArrayList()
     private val database = Database()
 
     private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
@@ -38,10 +37,9 @@ class LocatorView(
         circlePaint.color = Color.RED
         debugPaint.color = Color.GREEN
         roomPaint.color = Color.BLACK
-        //roomPaint.style = Paint.Style.STROKE
+        roomPaint.style = Paint.Style.STROKE
         roomPaint.strokeWidth = 2.0f
-        roomPaint.shader =  LinearGradient(0.0f, 0.0f, 50.0f, 50.0f, Color.RED, Color.GREEN, Shader.TileMode.MIRROR)
-        points.add(PointF(4.0f, 4.0f))
+        //roomPaint.shader =  LinearGradient(0.0f, 0.0f, 50.0f, 50.0f, Color.RED, Color.GREEN, Shader.TileMode.MIRROR)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -59,7 +57,7 @@ class LocatorView(
 
         for (room in database.getRooms()) {
             room.path.transform(drawMatrix, drawPath)
-            roomPaint.shader.setLocalMatrix(drawMatrix)
+            //roomPaint.shader.setLocalMatrix(drawMatrix)
             canvas.drawPath(drawPath, roomPaint)
         }
 
@@ -67,9 +65,8 @@ class LocatorView(
 
         canvas.matrix = drawMatrix
 
-        for (point in points) {
-            canvas.drawCircle(point.x, point.y, 0.5f, circlePaint)
-        }
+        for (anchorPoint in database.anchorPoints)
+            canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
 
         canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
         canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
@@ -201,7 +198,7 @@ class LocatorView(
                 val x = screenToWorldX(e.x)
                 val y = screenToWorldY(e.y)
                 Log.d("TAGGG", "${e.x},${e.y} -> $x,$y")
-                points.add(PointF(x, y))
+                database.anchorPoints.add(AnchorPoint(x.toDouble(), y.toDouble()))
                 invalidate()
             }
         }

@@ -10,6 +10,7 @@ import com.snatik.polygon.Polygon
 class Room(val name: String, points: List<Point>) {
     val path = Path()
     val polygon: Polygon
+    val anchorPoints = ArrayList<AnchorPoint>()
 
     init {
         val polygonBuilder = PolygonBuilderProxy.getPolygonBuilder()
