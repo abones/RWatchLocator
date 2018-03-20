@@ -13,4 +13,12 @@ class Vector(val x: Double, val y: Double) {
     fun dot(other: Vector): Double {
         return x * other.x + y * other.y
     }
+
+    fun dot(otherX: Double, otherY: Double): Double {
+        return x * otherX + y * otherY
+    }
+
+    override fun toString(): String {
+        return "Vector(x=$x, y=$y, length=$length)"
+    }
 }

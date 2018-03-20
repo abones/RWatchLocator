@@ -73,8 +73,8 @@ class BspTreeTest {
     @Test
     fun oneInFrontOfOther() {
         val result = BspTree.generateBsp(listOf(
-            NormalLine(0.0, 1.0, 1.0, 1.0), // /\ facing same direction
-            NormalLine(0.0, 0.0, 1.0, 0.0)  // /\
+            NormalLine(0.0, 0.0, 1.0, 0.0), // this one will become root
+            NormalLine(0.0, 1.0, 1.0, 1.0)
         ))
 
         Assert.assertNotNull(result!!.front)
@@ -86,8 +86,8 @@ class BspTreeTest {
     @Test
     fun oneBehindAnother() {
         val result = BspTree.generateBsp(listOf(
-            NormalLine(0.0, -1.0, 1.0, -1.0), // /\ facing same direction
-            NormalLine(0.0, 0.0, 1.0, 0.0)    // /\
+            NormalLine(0.0, 1.0, 1.0, 1.0), // this one will become root
+            NormalLine(0.0, 0.0, 1.0, 0.0)
         ))
 
         Assert.assertNull(result!!.front)

@@ -16,15 +16,15 @@ class BspTree {
                     if (secondLine === line)
                         continue
 
-                    val dot = line.normal.dot(secondLine.normal)
-                    when {
-                        dot - 1.0f < 0.0001 -> currentSplit.lines.add(secondLine)
-                        dot < 0.0 -> currentSplit.pendingFront.add(secondLine)
-                        else -> currentSplit.pendingBack.add(secondLine)
+                    val side = line.getSide(secondLine.startX, secondLine.startY)
+                    when (side) {
+                        NormalLine.Side.FRONT -> currentSplit.pendingFront.add(secondLine)
+                        NormalLine.Side.BACK -> currentSplit.pendingBack.add(secondLine)
+                        NormalLine.Side.COLLINEAR -> currentSplit.lines.add(secondLine)
                     }
                 }
 
-                val sum = currentSplit.pendingFront.size - currentSplit.pendingBack.size
+                val sum = Math.abs(currentSplit.pendingFront.size - currentSplit.pendingBack.size)
 
                 if (sum == 0)
                     return currentSplit // no point in looking further
@@ -45,10 +45,15 @@ class BspTree {
             // TODO: optimize split.lines
             // TODO: split anything intersected
 
-            split.front = generateBsp(split.pendingFront)
-            split.pendingFront.clear()
-            split.back = generateBsp(split.pendingBack)
-            split.pendingBack.clear()
+            if (split.pendingFront.size > 0) {
+                split.front = generateBsp(split.pendingFront)
+                split.pendingFront.clear()
+            }
+
+            if (split.pendingBack.size > 0) {
+                split.back = generateBsp(split.pendingBack)
+                split.pendingBack.clear()
+            }
 
             return split
         }
