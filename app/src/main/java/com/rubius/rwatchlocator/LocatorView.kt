@@ -55,7 +55,7 @@ class LocatorView(
         drawMatrix.setTranslate(getTotalTranslationX(), getTotalTranslationY())
         drawMatrix.postScale(totalScale, totalScale)
 
-        for (room in database.getRooms()) {
+        for (room in database.rooms) {
             room.path.transform(drawMatrix, drawPath)
             //roomPaint.shader.setLocalMatrix(drawMatrix)
             canvas.drawPath(drawPath, roomPaint)
