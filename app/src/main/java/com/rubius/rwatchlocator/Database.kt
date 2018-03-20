@@ -1,14 +1,27 @@
 package com.rubius.rwatchlocator
 
+import com.rubius.rwatchlocator.BspTree.Companion.generateBsp
 import com.snatik.polygon.Line
-import com.snatik.polygon.Point
 
 /**
  *
  */
 class Database {
-    val anchorPoints = arrayListOf(AnchorPoint(4.0, 4.0))
-    val rooms = listOf(
+    var rooms = listOf<Room>()
+        set(value) {
+            field = value
+
+            val lines = arrayListOf<Line>()
+            for (room in value)
+                lines.addAll(room.polygon.sides)
+            bspRoot = generateBsp(lines.map { l -> NormalLine(l) })
+        }
+    val anchorPoints = ArrayList<AnchorPoint>()
+    var bspRoot: TreeNode? = null
+        private set(value) {
+            field = value
+        }
+    /*= listOf(
         Room(
             "301",
             listOf(
@@ -202,64 +215,5 @@ class Database {
                 Point(42.0, 18.0)
             )
         )
-    )
-
-    private fun getNormalDot(line: NormalLine, secondLine: NormalLine): Double {
-        return line.normal.x * secondLine.normal.x + line.normal.y + secondLine.normal.y
-    }
-
-    private fun getSplittingLine(lines: List<NormalLine>): TreeNode? {
-        var minSum = lines.size
-        var bestSplit: TreeNode? = null
-        for (line in lines) {
-            val currentSplit = TreeNode()
-            currentSplit.lines.add(line)
-
-            for (secondLine in lines) {
-                if (secondLine === line)
-                    continue
-
-                val dot = getNormalDot(line, secondLine)
-                when {
-                    dot == 1.0 -> currentSplit.lines.add(secondLine)
-                    dot < 0 -> currentSplit.pendingFront.add(secondLine)
-                    else -> currentSplit.pendingBack.add(secondLine)
-                }
-            }
-
-            val sum = currentSplit.pendingFront.size - currentSplit.pendingBack.size
-
-            if (sum == 0)
-                return currentSplit // no point in looking further
-            else if (sum < minSum) {
-                minSum = sum
-                bestSplit = currentSplit
-            }
-        }
-
-        return bestSplit
-    }
-
-    private fun generateBsp(lines: List<NormalLine>): TreeNode? {
-        // TODO: exit condition
-
-        val split = getSplittingLine(lines) ?: return null
-
-        // TODO: optimize split.lines
-        // TODO: split anything intersected
-
-        split.front = generateBsp(split.pendingFront)
-        split.pendingFront.clear()
-        split.back = generateBsp(split.pendingBack)
-        split.pendingBack.clear()
-
-        return split
-    }
-
-    fun createBsp() {
-        val lines = arrayListOf<Line>()
-        for (room in rooms)
-            lines.addAll(room.polygon.sides)
-        generateBsp(lines.map { l -> NormalLine(l) })
-    }
+    )*/
 }

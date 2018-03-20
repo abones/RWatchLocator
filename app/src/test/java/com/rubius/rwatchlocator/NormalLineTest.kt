@@ -16,7 +16,7 @@ class NormalLineTest {
     private val quadrant4Line = Line(Point(-2.0, 2.0), Point(-4.0, 4.0))
 
     private val UNIT_VECTOR_COORDINATE = Math.sqrt(0.5)
-    
+
     @Test
     fun lineNormalizesVector() {
         val line1 = NormalLine(quadrant1Line)

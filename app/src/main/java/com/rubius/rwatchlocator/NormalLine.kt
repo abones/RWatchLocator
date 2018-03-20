@@ -5,10 +5,13 @@ import com.snatik.polygon.Line
 /**
  *
  */
-data class NormalLine(val line: Line) {
-    val normal = Vector(-(line.end.y - line.start.y), line.end.x - line.start.x).normalize()
+data class NormalLine(val startX: Double, val startY: Double, val endX: Double, val endY: Double) {
+
+    constructor(line: Line) : this(line.start.x, line.start.y, line.end.x, line.end.y)
+
+    val normal = Vector(-(endY - startY), endX - startX).normalize()
 
     override fun toString(): String {
-        return "NormalLine(line=$line, normal=$normal)"
+        return "NormalLine(startX=$startX, startY=$startY, endX=$endX, endY=$endY, normal=$normal)"
     }
 }
