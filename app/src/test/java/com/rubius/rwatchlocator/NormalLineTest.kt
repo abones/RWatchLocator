@@ -117,4 +117,48 @@ class NormalLineTest {
 
         Assert.assertNull(point)
     }
+
+    @Test
+    fun parallelVerticalsDoNotIntersect() {
+        val line1 = NormalLine(0.0, 0.0, 0.0, 1.0)
+        val line2 = NormalLine(1.0, 0.0, 1.0, 1.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNull(point)
+    }
+
+    @Test
+    fun parallelVerticalsIntersect() {
+        val line1 = NormalLine(0.0, 0.0, 0.0, 1.0)
+        val line2 = NormalLine(0.0, -1.0, 0.0, 0.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNotNull(point)
+        Assert.assertEquals(0.0, point!!.x)
+        Assert.assertEquals(0.0, point.y)
+    }
+
+    @Test
+    fun parallelVerticalSegmentsDoNotIntersect() {
+        val line1 = NormalLine(0.0, 0.0, 0.0, 1.0)
+        val line2 = NormalLine(0.0, 2.0, 0.0, 3.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNull(point)
+    }
+
+    @Test
+    fun firstVerticalIntersects() {
+        val line1 = NormalLine(2.0, 0.0, 2.0, 4.0)
+        val line2 = NormalLine(0.0, 0.0, 4.0, 4.0) // lines intersect, segments do not
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNotNull(point)
+        Assert.assertEquals(2.0, point!!.x)
+        Assert.assertEquals(2.0, point.y)
+    }
 }

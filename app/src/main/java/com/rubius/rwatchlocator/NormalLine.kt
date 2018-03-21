@@ -14,6 +14,11 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
     private val slope = (endY - startY) / (endX - startX)
     private val intercept = startY - slope * startX
 
+    private val minX = Math.min(startX, endX)
+    private val maxX = Math.max(startX, endX)
+    private val minY = Math.min(startY, endY)
+    private val maxY = Math.max(startY, endY)
+
     fun getSide(x: Double, y: Double): Side {
         val dot = normal.dot(x - startX, y - startY)
         return when {
@@ -21,6 +26,10 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
             dot > 0.0001 -> Side.FRONT
             else -> Side.COLLINEAR
         }
+    }
+
+    private fun segmentContains(point: Point): Boolean { // point is guaranteed to belong to line
+        return point.x in minX..maxX && point.y in minY..maxY
     }
 
     fun getIntersection(other: NormalLine): Point? {
@@ -31,32 +40,27 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
             if (thisIsVertical && otherIsVertical) {
                 if (startX != other.startX)
                     return null
-                // same x
-                val thisMin = Math.min(startY, endY)
-                val thisMax = Math.max(startY, endY)
-                val otherMin = Math.min(other.startY, other.endY)
-                val otherMax = Math.max(other.startY, other.endY)
-                // check if y segments intersect
-                return if (thisMin <= otherMax && thisMax >= otherMin) Point(startX, thisMin) else null
+                // same x, check if y segments intersect
+                return if (minY <= other.maxY && maxY >= other.minY) Point(startX, minY) else null
             }
 
             // only one is vertical
-            val vertX: Double
+            val verticalX: Double
             val slope: Double
             val intercept: Double
             if (thisIsVertical) {
-                vertX = startX
+                verticalX = startX
                 slope = other.slope
                 intercept = other.intercept
             } else {
-                vertX = other.startX
+                verticalX = other.startX
                 slope = this.slope
                 intercept = this.intercept
             }
 
-            val y = slope * vertX + intercept
+            val y = slope * verticalX + intercept
 
-            result = Point(vertX, y)
+            result = Point(verticalX, y)
         } else {
             val slopeDiff = slope - other.slope
             if (slopeDiff == 0.0)
@@ -67,8 +71,7 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
             result = Point(x, y)
         }
 
-        // TODO: check whether belongs
-        return result
+        return if (segmentContains(result) && other.segmentContains(result)) result else null
     }
 
     override fun toString(): String {
