@@ -19,17 +19,21 @@ class BspTree {
                     val sideStart = line.getSide(secondLine.startX, secondLine.startY)
                     val sideEnd = line.getSide(secondLine.endX, secondLine.endY)
 
-                    //if (sideStart != sideEnd)
-                    //    val point = line.getIntersection(secondLine)
-
-                    //if (sideStart == sideEnd)
-                        when (sideStart) {
-                            NormalLine.Side.FRONT -> currentSplit.pendingFront.add(secondLine)
-                            NormalLine.Side.BACK -> currentSplit.pendingBack.add(secondLine)
-                            NormalLine.Side.COLLINEAR -> currentSplit.lines.add(secondLine)
+                    if (sideStart == sideEnd)
+                        placeLine(secondLine, currentSplit, sideStart)
+                    else {
+                        val point = line.getIntersection(secondLine, false)
+                        if (point != null) {
+                            if (secondLine.startX == point.x && point.y == secondLine.startY)
+                                placeLine(secondLine, currentSplit, sideStart)
+                            else {
+                                val lineStart = NormalLine(secondLine.startX, secondLine.startY, point.x, point.y)
+                                val lineEnd = NormalLine(point.x, point.y, secondLine.endX, secondLine.endY)
+                                placeLine(lineStart, currentSplit, sideStart)
+                                placeLine(lineEnd, currentSplit, sideEnd)
+                            }
                         }
-                    //else
-
+                    }
                 }
 
                 val sum = Math.abs(currentSplit.pendingFront.size - currentSplit.pendingBack.size)
@@ -45,6 +49,14 @@ class BspTree {
             return bestSplit
         }
 
+        private fun placeLine(secondLine: NormalLine, currentSplit: TreeNode, side: NormalLine.Side) {
+            when (side) {
+                NormalLine.Side.FRONT -> currentSplit.pendingFront.add(secondLine)
+                NormalLine.Side.BACK -> currentSplit.pendingBack.add(secondLine)
+                NormalLine.Side.COLLINEAR -> currentSplit.lines.add(secondLine)
+            }
+        }
+
         fun generateBsp(lines: List<NormalLine>): TreeNode? {
             if (lines.size > 2 && isConvex(lines)) {
                 val result = TreeNode()
@@ -53,8 +65,6 @@ class BspTree {
             }
 
             val split = getSplittingLine(lines) ?: return null
-
-            // TODO: split anything intersected
 
             if (split.pendingFront.size > 0) {
                 split.front = generateBsp(split.pendingFront)

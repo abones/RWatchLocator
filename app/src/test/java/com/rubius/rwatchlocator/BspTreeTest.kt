@@ -101,14 +101,14 @@ class BspTreeTest {
     fun picksMostBalancedSplit() {
         val result = BspTree.generateBsp(listOf(
             NormalLine(0.0, -1.0, 0.0, 1.0),
-            NormalLine(1.0, -1.0, 1.0, 1.0),
-            NormalLine(0.0, 2.0, 3.0, 2.0),
-            NormalLine(0.0, 0.0, 3.0, 0.0)
+            NormalLine(1.0, -1.0, 1.0, 1.0), // < this one
+            NormalLine(2.0, -1.0, 2.0, 1.0),
+            NormalLine(0.0, 0.0, 2.0, 0.0)
         ))
 
-        Assert.assertEquals(0.0, result!!.lines[0].startX) // i.e. picks the line on X axis first
-        Assert.assertEquals(0.0, result.lines[0].startY)
-        Assert.assertEquals(3.0, result.lines[0].endX)
-        Assert.assertEquals(0.0, result.lines[0].endY)
+        Assert.assertEquals(1.0, result!!.lines[0].startX) // i.e. picks the line on X axis first
+        Assert.assertEquals(-1.0, result.lines[0].startY)
+        Assert.assertEquals(1.0, result.lines[0].endX)
+        Assert.assertEquals(1.0, result.lines[0].endY)
     }
 }

@@ -32,7 +32,7 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
         return point.x in minX..maxX && point.y in minY..maxY
     }
 
-    fun getIntersection(other: NormalLine): Point? {
+    fun getIntersection(other: NormalLine, shouldCheckSegment: Boolean = true): Point? {
         val thisIsVertical = startX == endX
         val otherIsVertical = other.startX == other.endX
         val result: Point
@@ -41,7 +41,7 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
                 if (startX != other.startX)
                     return null
                 // same x, check if y segments intersect
-                return if (minY <= other.maxY && maxY >= other.minY) Point(startX, minY) else null
+                return if (!shouldCheckSegment || (minY <= other.maxY && maxY >= other.minY)) Point(startX, minY) else null
             }
 
             // only one is vertical
@@ -71,7 +71,7 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
             result = Point(x, y)
         }
 
-        return if (segmentContains(result) && other.segmentContains(result)) result else null
+        return if (!shouldCheckSegment || (segmentContains(result) && other.segmentContains(result))) result else null
     }
 
     override fun toString(): String {
