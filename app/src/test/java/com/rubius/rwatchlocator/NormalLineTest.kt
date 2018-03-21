@@ -49,4 +49,72 @@ class NormalLineTest {
         Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.x, 0.0001)
         Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.y, 0.0001)
     }
+
+    @Test
+    fun identicalLinesIntersectAtStart() {
+        val line1 = NormalLine(0.0, 0.0, 1.0, 0.0)
+        val line2 = NormalLine(0.0, 0.0, 1.0, 0.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNotNull(point)
+        Assert.assertEquals(0.0, point!!.x)
+        Assert.assertEquals(0.0, point.y)
+    }
+
+    @Test
+    fun collinearLinesIntersectAtStart() {
+        val line1 = NormalLine(0.0, 0.0, 1.0, 0.0)
+        val line2 = NormalLine(0.0, 0.0, 2.0, 0.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNotNull(point)
+        Assert.assertEquals(0.0, point!!.x)
+        Assert.assertEquals(0.0, point.y)
+    }
+
+    @Test
+    fun parallelLinesDoNotIntersect() {
+        val line1 = NormalLine(0.0, 0.0, 1.0, 0.0)
+        val line2 = NormalLine(0.0, 1.0, 1.0, 1.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNull(point)
+    }
+
+    @Test
+    fun linesIntersectAtCommonPoint() {
+        val line1 = NormalLine(0.0, 0.0, 1.0, 0.0)
+        val line2 = NormalLine(1.0, 0.0, 1.0, 1.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNotNull(point)
+        Assert.assertEquals(1.0, point!!.x)
+        Assert.assertEquals(0.0, point.y)
+    }
+
+    @Test
+    fun linesIntersect() {
+        val line1 = NormalLine(0.0, 0.0, 2.0, 0.0)
+        val line2 = NormalLine(1.0, 1.0, 1.0, -1.0)
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNotNull(point)
+        Assert.assertEquals(1.0, point!!.x)
+        Assert.assertEquals(0.0, point.y)
+    }
+
+    @Test
+    fun segmentsDoNotIntersect() {
+        val line1 = NormalLine(0.0, 0.0, 2.0, 0.0)
+        val line2 = NormalLine(1.0, 2.0, 1.0, 1.0) // lines intersect, segments do not
+
+        val point = line1.getIntersection(line2)
+
+        Assert.assertNull(point)
+    }
 }

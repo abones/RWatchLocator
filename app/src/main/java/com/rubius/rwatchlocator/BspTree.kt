@@ -16,19 +16,27 @@ class BspTree {
                     if (secondLine === line)
                         continue
 
-                    val side = line.getSide(secondLine.startX, secondLine.startY)
-                    when (side) {
-                        NormalLine.Side.FRONT -> currentSplit.pendingFront.add(secondLine)
-                        NormalLine.Side.BACK -> currentSplit.pendingBack.add(secondLine)
-                        NormalLine.Side.COLLINEAR -> currentSplit.lines.add(secondLine)
-                    }
+                    val sideStart = line.getSide(secondLine.startX, secondLine.startY)
+                    val sideEnd = line.getSide(secondLine.endX, secondLine.endY)
+
+                    //if (sideStart != sideEnd)
+                    //    val point = line.getIntersection(secondLine)
+
+                    //if (sideStart == sideEnd)
+                        when (sideStart) {
+                            NormalLine.Side.FRONT -> currentSplit.pendingFront.add(secondLine)
+                            NormalLine.Side.BACK -> currentSplit.pendingBack.add(secondLine)
+                            NormalLine.Side.COLLINEAR -> currentSplit.lines.add(secondLine)
+                        }
+                    //else
+
                 }
 
                 val sum = Math.abs(currentSplit.pendingFront.size - currentSplit.pendingBack.size)
 
                 if (sum == 0)
                     return currentSplit // no point in looking further
-                else if (sum < minSum) {
+                if (sum < minSum) {
                     minSum = sum
                     bestSplit = currentSplit
                 }
