@@ -18,7 +18,7 @@ class LocatorView(
     private val circlePaint = Paint()
     private val debugPaint = Paint()
     private val roomPaint = Paint()
-    private val database = Database()
+    var database: Database? = null
 
     private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
     private val longPressDetector = GestureDetector(context, LongPressListener())
@@ -55,7 +55,7 @@ class LocatorView(
         drawMatrix.setTranslate(getTotalTranslationX(), getTotalTranslationY())
         drawMatrix.postScale(totalScale, totalScale)
 
-        for (room in database.rooms) {
+        for (room in database!!.rooms) {
             room.path.transform(drawMatrix, drawPath)
             //roomPaint.shader.setLocalMatrix(drawMatrix)
             canvas.drawPath(drawPath, roomPaint)
@@ -65,7 +65,9 @@ class LocatorView(
 
         canvas.matrix = drawMatrix
 
-        for (anchorPoint in database.anchorPoints)
+        drawNode(canvas, database!!.bspRoot, 0)
+
+        for (anchorPoint in database!!.anchorPoints)
             canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
 
         canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
@@ -79,6 +81,25 @@ class LocatorView(
         val lineY = height - LINE_PADDING
         canvas.drawLine(lineX - LINE_LENGTH, lineY, lineX, lineY, debugPaint)
         canvas.drawText("${screenToWorld(LINE_LENGTH)}", lineX - LINE_LENGTH, lineY - 100.0f, debugPaint)
+    }
+
+    private val colors = arrayOf(
+        Color.RED,
+        Color.GREEN,
+        Color.BLUE,
+        Color.CYAN,
+        Color.MAGENTA,
+        Color.YELLOW
+    )
+
+    private fun drawNode(canvas: Canvas, node: TreeNode?, level: Int) {
+        if (node == null)
+            return
+        debugPaint.color = colors[level % 6]
+        for (line in node.lines)
+            canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
+        drawNode(canvas, node.front, level + 1)
+        drawNode(canvas, node.back, level + 1)
     }
 
     private var prescaler = 1.0f
@@ -198,7 +219,7 @@ class LocatorView(
                 val x = screenToWorldX(e.x)
                 val y = screenToWorldY(e.y)
                 Log.d("TAGGG", "${e.x},${e.y} -> $x,$y")
-                database.anchorPoints.add(AnchorPoint(x.toDouble(), y.toDouble()))
+                database!!.anchorPoints.add(AnchorPoint(x.toDouble(), y.toDouble()))
                 invalidate()
             }
         }
