@@ -100,7 +100,7 @@ class BspTree {
             var curEndY: Double = curLine.maxY
             for (lineIndex in 1..(split.lines.size - 1)) {
                 val line = split.lines[lineIndex]
-                if (line.minX > curEndX && line.minY > curEndY) { // segment ended
+                if (line.minX > curEndX || line.minY > curEndY) { // segment ended
                     result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
                     curStartX = line.minX
                     curStartY = line.minY
