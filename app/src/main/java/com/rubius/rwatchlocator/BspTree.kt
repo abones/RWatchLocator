@@ -85,7 +85,7 @@ class BspTree {
         }
 
         private fun optimizeLines(split: TreeNode) {
-            /*if (split.lines.size <= 1)
+            if (split.lines.size <= 1)
                 return
             split.lines.sortWith(compareBy({ it.minX }, { it.minY }))
 
@@ -109,7 +109,7 @@ class BspTree {
             result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
 
             split.lines.clear()
-            split.lines.addAll(result)*/
+            split.lines.addAll(result)
         }
 
         private fun isConvex(lines: List<NormalLine>): Boolean {

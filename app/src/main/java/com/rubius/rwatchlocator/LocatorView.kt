@@ -50,10 +50,11 @@ class LocatorView(
     private fun drawNode(canvas: Canvas, node: TreeNode?, level: Int) {
         if (node == null)
             return
-        drawNodeLines(node.convexLines, canvas, Color.WHITE)
+
+        //drawNodeLines(node.convexLines, canvas, Color.WHITE)
 
         val isLeaf = false//node.front == null && node.back == null
-        val color = if (isLeaf) Color.BLACK else colors[level % 6]
+        val color = if (isLeaf) Color.BLACK else colors[level % colors.size]
         drawNodeLines(node.lines, canvas, color)
 
         drawNode(canvas, node.front, level + 1)
@@ -127,7 +128,9 @@ class LocatorView(
         Color.BLUE,
         Color.CYAN,
         Color.MAGENTA,
-        Color.YELLOW
+        Color.YELLOW,
+        Color.DKGRAY,
+        Color.LTGRAY
     )
 
     private var prescaler = 1.0f
