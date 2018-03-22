@@ -30,8 +30,8 @@ class MainActivity : Activity() {
                     Point(8.0, 7.0),
                     Point(0.0, 7.0)
                 )
-            ),
-            Room(
+            )
+            /*Room(
                 "302a",
                 listOf(
                     Point(8.0, 0.0),
@@ -205,7 +205,7 @@ class MainActivity : Activity() {
                     Point(45.0, 18.0),
                     Point(42.0, 18.0)
                 )
-            )
+            )*/
         )
 
         printNode("r", locatorView.database!!.bspRoot, 0)

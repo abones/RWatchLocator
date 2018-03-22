@@ -56,7 +56,7 @@ class BspTreeTest {
         ))
 
         assertLeaf(result!!)
-        Assert.assertEquals(3, result.lines.size)
+        Assert.assertEquals(3, result.convexLines.size)
     }
 
     @Test
@@ -68,7 +68,7 @@ class BspTreeTest {
         ))
 
         assertLeaf(result!!)
-        Assert.assertEquals(3, result.lines.size)
+        Assert.assertEquals(3, result.convexLines.size)
     }
 
     @Test

@@ -55,26 +55,29 @@ class LocatorView(
         drawMatrix.setTranslate(getTotalTranslationX(), getTotalTranslationY())
         drawMatrix.postScale(totalScale, totalScale)
 
-        for (room in database!!.rooms) {
-            room.path.transform(drawMatrix, drawPath)
-            //roomPaint.shader.setLocalMatrix(drawMatrix)
-            canvas.drawPath(drawPath, roomPaint)
-        }
-
         canvas.save()
 
         canvas.matrix = drawMatrix
+
+        debugPaint.strokeWidth = 1.0f
 
         drawNode(canvas, database!!.bspRoot, 0)
 
         for (anchorPoint in database!!.anchorPoints)
             canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
 
+        debugPaint.strokeWidth = 0.0f
+
         canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
         canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         canvas.restore()
 
+        for (room in database!!.rooms) {
+            room.path.transform(drawMatrix, drawPath)
+            //roomPaint.shader.setLocalMatrix(drawMatrix)
+            canvas.drawPath(drawPath, roomPaint)
+        }
 
         // overlay
         val lineX = width - LINE_PADDING
@@ -95,9 +98,16 @@ class LocatorView(
     private fun drawNode(canvas: Canvas, node: TreeNode?, level: Int) {
         if (node == null)
             return
-        debugPaint.color = colors[level % 6]
-        for (line in node.lines)
-            canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
+        if (node.lines.size < 20) {
+            debugPaint.color = Color.WHITE
+            for (line in node.convexLines)
+                canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
+
+            val isLeaf = false//node.front == null && node.back == null
+            debugPaint.color = if (isLeaf) Color.BLACK else colors[level % 6]
+            for (line in node.lines)
+                canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
+        }
         drawNode(canvas, node.front, level + 1)
         drawNode(canvas, node.back, level + 1)
     }
