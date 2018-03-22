@@ -114,19 +114,29 @@ class BspTree {
             split.lines.addAll(result)
         }
 
-        private fun isConvex(lines: List<NormalLine>): Boolean {
-            if (lines.isEmpty())
-                return false
+        fun isConvex(lines: List<NormalLine>): Boolean {
+            if (lines.size <= 2)
+                return true
+
             var isPositive = false
+            var angleSum = 0.0
             for (i in 1 until lines.size) {
-                val crossSin = lines[i - 1].normal.crossSin(lines[i].normal)
+                val angle = lines[i - 1].normal.angleBetween(lines[i].normal)
+                //Log.d("TAGG", "Angle between ${lines[i-1]} and ${lines[i]} is ${getAngle(crossSin)}")
                 if (i == 1)
-                    isPositive = crossSin >= 0
+                    isPositive = angle >= 0
                 else
-                    if (crossSin >= 0 != isPositive)
+                    if (angle >= 0 != isPositive)
                         return false
+                angleSum += angle
+                if (Math.abs(angleSum) > Math.PI * 2)
+                    return false
             }
             return true
+        }
+
+        private fun getAngle(crossSin: Double): Double {
+            return Math.asin(crossSin) * 180.0 / Math.PI
         }
 
         fun generateBsp(lines: List<NormalLine>): TreeNode? {

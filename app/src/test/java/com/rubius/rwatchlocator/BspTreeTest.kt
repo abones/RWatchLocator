@@ -217,4 +217,43 @@ class BspTreeTest {
         Assert.assertEquals(2, frontSplit.front!!.convexLines.size)
         Assert.assertEquals(2, frontSplit.back!!.convexLines.size)
     }*/
+
+    @Test
+    fun parallelAreConvex1() {
+        val lines = listOf(
+            // room 303
+            NormalLine(0.0, 1.0, 1.0, 1.0),
+            NormalLine(1.0, 0.0, 0.0, 0.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertTrue(isConvex)
+    }
+
+    @Test
+    fun parallelAreConvex2() {
+        val lines = listOf(
+            // room 303
+            NormalLine(0.0, 1.0, 1.0, 1.0),
+            NormalLine(0.0, 0.0, 1.0, 0.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertTrue(isConvex)
+    }
+
+    @Test
+    fun leftConvex() {
+        val lines = listOf(
+            NormalLine(0.0, 0.0, 0.0, 1.0),
+            NormalLine(0.0, 1.0, 1.0, 1.0),
+            NormalLine(1.0, 0.0, 0.0, 0.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertTrue(isConvex)
+    }
 }

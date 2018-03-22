@@ -209,3 +209,4 @@ class NormalLineTest {
         Assert.assertEquals(NormalLine.Side.COLLINEAR, sideEnd)
     }
 }
+

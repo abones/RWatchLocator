@@ -63,11 +63,10 @@ class LocatorView(
         if (node == null)
             return
 
-        if (level >= minLevel && level <= maxLevel) {
-            //drawNodeLines(node.convexLines, canvas, Color.WHITE)
+        if (level in minLevel..maxLevel) {
+            drawNodeLines(node.convexLines, canvas, Color.WHITE)
 
-            val isLeaf = false//node.front == null && node.back == null
-            val color = if (isLeaf) Color.BLACK else colors[level % colors.size]
+            val color = colors[level % colors.size]
             drawNodeLines(node.lines, canvas, color)
         }
 

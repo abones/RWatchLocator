@@ -67,4 +67,52 @@ class VectorTest {
 
         Assert.assertEquals(dot12, dot21, 0.0)
     }
+
+    @Test
+    fun zeroAngle() {
+        val v1 = Vector(1.0, 1.0)
+        val v2 = Vector(1.0, 1.0)
+
+        val angle1 = v1.signedAngleBetween(v2)
+        val angle2 = v2.signedAngleBetween(v1)
+
+        Assert.assertEquals(0.0, angle1)
+        Assert.assertEquals(0.0, angle2)
+    }
+
+    @Test
+    fun pi4Angle() {
+        val v1 = Vector(1.0, 1.0)
+        val v2 = Vector(0.0, 1.0)
+
+        val angle1 = v1.signedAngleBetween(v2)
+        val angle2 = v2.signedAngleBetween(v1)
+
+        Assert.assertEquals(Math.PI / 4.0, angle1)
+        Assert.assertEquals(-Math.PI / 4.0, angle2)
+    }
+
+    @Test
+    fun pi2Angle() {
+        val v1 = Vector(1.0, 1.0)
+        val v2 = Vector(-1.0, 1.0)
+
+        val angle1 = v1.signedAngleBetween(v2)
+        val angle2 = v2.signedAngleBetween(v1)
+
+        Assert.assertEquals(Math.PI / 2.0, angle1)
+        Assert.assertEquals(-Math.PI / 2.0, angle2)
+    }
+
+    @Test
+    fun piAngle() {
+        val v1 = Vector(1.0, 1.0)
+        val v2 = Vector(-1.0, -1.0)
+
+        val angle1 = v1.signedAngleBetween(v2)
+        val angle2 = v2.signedAngleBetween(v1)
+
+        Assert.assertEquals(Math.PI, angle1)
+        Assert.assertEquals(Math.PI, angle2) // both positive
+    }
 }

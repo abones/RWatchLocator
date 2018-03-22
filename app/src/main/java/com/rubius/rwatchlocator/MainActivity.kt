@@ -13,6 +13,24 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         locatorView.database = Database()
         locatorView.database!!.rooms = listOf(
+            /*Room(
+                "301",
+                listOf(
+                    Point(0.0, 0.0),
+                    Point(0.0, 1.0),
+                    Point(1.0, 1.0),
+                    Point(1.0, 0.0)
+                )
+            ),
+            Room(
+                "301",
+                listOf(
+                    Point(1.0, 0.0),
+                    Point(1.0, 1.0),
+                    Point(2.0, 1.0),
+                    Point(2.0, 0.0)
+                )
+            )*/
             Room(
                 "301",
                 listOf(
@@ -228,7 +246,7 @@ class MainActivity : Activity() {
         printNode("b", node.back, level + 1)
     }
 
-    inner class SeekBarListener(private val isMin: Boolean): SeekBar.OnSeekBarChangeListener {
+    inner class SeekBarListener(private val isMin: Boolean) : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
             if (isMin)
                 locatorView.minLevel = p1
