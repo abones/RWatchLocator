@@ -47,8 +47,39 @@ class LocatorView(
         prescaler = (Math.min(w, h) / LINE_LENGTH) * 10.0f
     }
 
-    override fun onDraw(canvas: Canvas) {
-        // scene
+    private fun drawNode(canvas: Canvas, node: TreeNode?, level: Int) {
+        if (node == null)
+            return
+        drawNodeLines(node.convexLines, canvas, Color.WHITE)
+
+        val isLeaf = false//node.front == null && node.back == null
+        val color = if (isLeaf) Color.BLACK else colors[level % 6]
+        drawNodeLines(node.lines, canvas, color)
+
+        drawNode(canvas, node.front, level + 1)
+        drawNode(canvas, node.back, level + 1)
+    }
+
+    private fun drawNodeLines(lines: List<NormalLine>, canvas: Canvas, color: Int) {
+        for (line in lines) {
+            debugPaint.strokeWidth = 0.5f
+            debugPaint.color = color
+            canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
+
+            canvas.save()
+
+            canvas.translate((line.endX + line.startX).toFloat() / 2.0f, (line.endY + line.startY).toFloat() / 2.0f)
+            canvas.scale(line.length.toFloat() * 0.1f, line.length.toFloat() * 0.1f)
+
+            debugPaint.strokeWidth = 0.0f
+            debugPaint.color = Color.RED
+            canvas.drawLine(0.0f, 0.0f, line.normal.x.toFloat(), line.normal.y.toFloat(), debugPaint)
+
+            canvas.restore()
+        }
+    }
+
+    private fun drawScene(canvas: Canvas) {
         val totalScale = getTotalScale()
 
         drawMatrix.reset()
@@ -59,17 +90,15 @@ class LocatorView(
 
         canvas.matrix = drawMatrix
 
-        debugPaint.strokeWidth = 1.0f
+        debugPaint.strokeWidth = 0.0f
+        debugPaint.color = Color.DKGRAY
+        canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
+        canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         drawNode(canvas, database!!.bspRoot, 0)
 
         for (anchorPoint in database!!.anchorPoints)
             canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
-
-        debugPaint.strokeWidth = 0.0f
-
-        canvas.drawLine(0.0f, 0.0f, 1.0f, 0.0f, debugPaint)
-        canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         canvas.restore()
 
@@ -78,12 +107,18 @@ class LocatorView(
             //roomPaint.shader.setLocalMatrix(drawMatrix)
             canvas.drawPath(drawPath, roomPaint)
         }
+    }
 
-        // overlay
+    private fun drawOverlay(canvas: Canvas) {
         val lineX = width - LINE_PADDING
         val lineY = height - LINE_PADDING
         canvas.drawLine(lineX - LINE_LENGTH, lineY, lineX, lineY, debugPaint)
         canvas.drawText("${screenToWorld(LINE_LENGTH)}", lineX - LINE_LENGTH, lineY - 100.0f, debugPaint)
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        drawScene(canvas)
+        drawOverlay(canvas)
     }
 
     private val colors = arrayOf(
@@ -94,23 +129,6 @@ class LocatorView(
         Color.MAGENTA,
         Color.YELLOW
     )
-
-    private fun drawNode(canvas: Canvas, node: TreeNode?, level: Int) {
-        if (node == null)
-            return
-        if (node.lines.size < 20) {
-            debugPaint.color = Color.WHITE
-            for (line in node.convexLines)
-                canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
-
-            val isLeaf = false//node.front == null && node.back == null
-            debugPaint.color = if (isLeaf) Color.BLACK else colors[level % 6]
-            for (line in node.lines)
-                canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
-        }
-        drawNode(canvas, node.front, level + 1)
-        drawNode(canvas, node.back, level + 1)
-    }
 
     private var prescaler = 1.0f
     private var scale = 1.0f

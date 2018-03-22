@@ -9,6 +9,9 @@ import com.snatik.polygon.Point
 data class NormalLine(val startX: Double, val startY: Double, val endX: Double, val endY: Double) {
     constructor(line: Line) : this(line.start.x, line.start.y, line.end.x, line.end.y)
 
+    private val lengthX = endX - startX
+    private val lengthY = endY - startY
+    val length = Math.sqrt(lengthX * lengthX + lengthY * lengthY)
     val normal = Vector(-(endY - startY), endX - startX).normalize()
 
     private val slope = (endY - startY) / (endX - startX)
