@@ -16,6 +16,19 @@ class MainActivity : Activity() {
             Room(
                 "301",
                 listOf(
+                    Point(0.0, 1.0),
+                    Point(1.0, 1.0),
+                    Point(1.0, 0.0),
+                    Point(0.0, 0.0),
+                    Point(1.0, 0.0),
+                    Point(1.0, -1.0)
+                    //Point(0.0, -1.0),
+                    //Point(0.0, 0.0)
+                )
+            )
+            /*Room(
+                "301",
+                listOf(
                     Point(0.0, 7.0),
                     Point(4.0, 7.0),
                     Point(4.0, 14.0),
@@ -31,7 +44,7 @@ class MainActivity : Activity() {
                     Point(0.0, 7.0)
                 )
             )
-            /*Room(
+            Room(
                 "302a",
                 listOf(
                     Point(8.0, 0.0),

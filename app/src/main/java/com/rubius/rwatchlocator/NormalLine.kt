@@ -14,16 +14,16 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
     private val slope = (endY - startY) / (endX - startX)
     private val intercept = startY - slope * startX
 
-    private val minX = Math.min(startX, endX)
-    private val maxX = Math.max(startX, endX)
-    private val minY = Math.min(startY, endY)
-    private val maxY = Math.max(startY, endY)
+    val minX = Math.min(startX, endX)
+    val maxX = Math.max(startX, endX)
+    val minY = Math.min(startY, endY)
+    val maxY = Math.max(startY, endY)
 
     fun getSide(x: Double, y: Double): Side {
         val dot = normal.dot(x - startX, y - startY)
         return when {
-            dot < 0.0001 -> Side.BACK
-            dot > 0.0001 -> Side.FRONT
+            dot < Constants.PRECISION -> Side.BACK
+            dot > Constants.PRECISION -> Side.FRONT
             else -> Side.COLLINEAR
         }
     }
@@ -72,6 +72,10 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
         }
 
         return if (!shouldCheckSegment || (segmentContains(result) && other.segmentContains(result))) result else null
+    }
+
+    fun areSameLine(other: NormalLine): Boolean {
+        return intercept == other.intercept && ((startX == endX && other.startX == other.endX) || (slope == other.slope))
     }
 
     override fun toString(): String {

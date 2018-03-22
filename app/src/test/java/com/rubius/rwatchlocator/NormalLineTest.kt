@@ -24,10 +24,10 @@ class NormalLineTest {
         val line3 = NormalLine(quadrant3Line)
         val line4 = NormalLine(quadrant4Line)
 
-        Assert.assertEquals(1.0, line1.normal.length, 0.0001)
-        Assert.assertEquals(1.0, line2.normal.length, 0.0001)
-        Assert.assertEquals(1.0, line3.normal.length, 0.0001)
-        Assert.assertEquals(1.0, line4.normal.length, 0.0001)
+        Assert.assertEquals(1.0, line1.normal.length, Constants.PRECISION)
+        Assert.assertEquals(1.0, line2.normal.length, Constants.PRECISION)
+        Assert.assertEquals(1.0, line3.normal.length, Constants.PRECISION)
+        Assert.assertEquals(1.0, line4.normal.length, Constants.PRECISION)
     }
 
     @Test
@@ -37,17 +37,17 @@ class NormalLineTest {
         val line3 = NormalLine(quadrant3Line)
         val line4 = NormalLine(quadrant4Line)
 
-        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line1.normal.x, 0.0001)
-        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line1.normal.y, 0.0001)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line1.normal.x, Constants.PRECISION)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line1.normal.y, Constants.PRECISION)
 
-        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line2.normal.x, 0.0001)
-        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line2.normal.y, 0.0001)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line2.normal.x, Constants.PRECISION)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line2.normal.y, Constants.PRECISION)
 
-        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line3.normal.x, 0.0001)
-        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line3.normal.y, 0.0001)
+        Assert.assertEquals(UNIT_VECTOR_COORDINATE, line3.normal.x, Constants.PRECISION)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line3.normal.y, Constants.PRECISION)
 
-        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.x, 0.0001)
-        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.y, 0.0001)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.x, Constants.PRECISION)
+        Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line4.normal.y, Constants.PRECISION)
     }
 
     @Test

@@ -57,7 +57,7 @@ class BspTree {
             }
         }
 
-        fun generateBsp(lines: List<NormalLine>): TreeNode? {
+        private fun generateBspInternal(lines: List<NormalLine>): TreeNode? {
             if (lines.size > 2 && isConvex(lines)) {
                 val result = TreeNode()
                 result.convexLines.addAll(lines)
@@ -65,6 +65,8 @@ class BspTree {
             }
 
             val split = getSplittingLine(lines) ?: return null
+
+            optimizeLines(split)
 
             if (split.pendingFront.size > 0) {
                 split.front = generateBsp(split.pendingFront)
@@ -77,6 +79,34 @@ class BspTree {
             }
 
             return split
+        }
+
+        private fun optimizeLines(split: TreeNode) {
+            if (split.lines.size <= 1)
+                return
+            split.lines.sortWith(compareBy({ it.minX }, { it.minY }))
+
+            val result = arrayListOf<NormalLine>()
+
+            val curLine = split.lines[0]
+            var curStartX: Double = curLine.minX // direction is lost at this point but this does not matter since split is complete
+            var curStartY: Double = curLine.minY
+            var curEndX: Double = curLine.maxX
+            var curEndY: Double = curLine.maxY
+            for (lineIndex in 1..(split.lines.size - 1)) {
+                val line = split.lines[lineIndex]
+                if (line.minX > curEndX && line.minY > curEndY) { // segment ended
+                    result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
+                    curStartX = line.minX
+                    curStartY = line.minY
+                }
+                curEndX = line.maxX
+                curEndY = line.maxY
+            }
+            result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
+
+            split.lines.clear()
+            split.lines.addAll(result)
         }
 
         private fun isConvex(lines: List<NormalLine>): Boolean {
@@ -92,6 +122,18 @@ class BspTree {
                         return false
             }
             return true
+        }
+
+        fun generateBsp(lines: List<NormalLine>): TreeNode? {
+            val newLines = getOptimizedLines(lines)
+            return generateBspInternal(newLines)
+        }
+
+        private fun getOptimizedLines(lines: List<NormalLine>): List<NormalLine> {
+            val sameVerticalLines = mapOf<Double, NormalLine>()
+            val sameLines = mapOf<Pair<Double, Double>, NormalLine>()
+            val result = arrayListOf<NormalLine>()
+            return lines
         }
     }
 }
