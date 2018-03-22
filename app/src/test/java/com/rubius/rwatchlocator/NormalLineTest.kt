@@ -172,4 +172,40 @@ class NormalLineTest {
         Assert.assertEquals(line2.endX, point!!.x)
         Assert.assertEquals(line2.endY, point.y)
     }
+
+    @Test
+    fun slopedSegmentsAreCollinear() {
+        val line1 = NormalLine(1.0, 1.0, 2.0, 2.0)
+        val line2 = NormalLine(2.0, 2.0, 1.0, 1.0)
+
+        val sideStart = line1.getSide(line2.startX, line2.startY)
+        val sideEnd = line1.getSide(line2.endX, line2.endY)
+
+        Assert.assertEquals(NormalLine.Side.COLLINEAR, sideStart)
+        Assert.assertEquals(NormalLine.Side.COLLINEAR, sideEnd)
+    }
+
+    @Test
+    fun horizontalSegmentsAreCollinear() {
+        val line1 = NormalLine(0.0, 18.0, 7.0, 18.0)
+        val line2 = NormalLine(7.0, 18.0, 0.0, 18.0)
+
+        val sideStart = line1.getSide(line2.startX, line2.startY)
+        val sideEnd = line1.getSide(line2.endX, line2.endY)
+
+        Assert.assertEquals(NormalLine.Side.COLLINEAR, sideStart)
+        Assert.assertEquals(NormalLine.Side.COLLINEAR, sideEnd)
+    }
+
+    @Test
+    fun verticalSegmentsAreCollinear() {
+        val line1 = NormalLine(18.0, 0.0, 18.0, 7.0)
+        val line2 = NormalLine(18.0, 7.0, 18.0, 0.0)
+
+        val sideStart = line1.getSide(line2.startX, line2.startY)
+        val sideEnd = line1.getSide(line2.endX, line2.endY)
+
+        Assert.assertEquals(NormalLine.Side.COLLINEAR, sideStart)
+        Assert.assertEquals(NormalLine.Side.COLLINEAR, sideEnd)
+    }
 }
