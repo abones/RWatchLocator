@@ -23,9 +23,11 @@ class BspTreeTest {
 
     @Test
     fun singleLineProducesSimpleNode() {
-        val result = BspTree.generateBsp(listOf(
+        val lines = listOf(
             NormalLine(0.0, 0.0, 0.0, 1.0)
-        ))
+        )
+
+        val result = BspTree.generateBsp(lines)
 
         assertLeaf(result!!)
         Assert.assertEquals(1, result.lines.size)
@@ -131,6 +133,62 @@ class BspTreeTest {
     }
 
     @Test
+    fun doesNotJoinWrongLinesConvex() {
+        val lines = listOf(
+            // room 303
+            NormalLine(10.0, 0.0, 18.0, 0.0),
+            NormalLine(18.0, 0.0, 18.0, 7.0),
+            NormalLine(18.0, 7.0, 10.0, 7.0),
+            NormalLine(10.0, 7.0, 10.0, 0.0),
+            // room 310
+            NormalLine(14.0, 11.0, 22.0, 11.0),
+            NormalLine(22.0, 11.0, 22.0, 14.0),
+            NormalLine(22.0, 14.0, 18.0, 14.0),
+            NormalLine(18.0, 14.0, 18.0, 18.0),
+            NormalLine(18.0, 18.0, 14.0, 18.0),
+            NormalLine(14.0, 18.0, 14.0, 11.0),
+            // room 310a
+            NormalLine(18.0, 14.0, 22.0, 14.0),
+            NormalLine(22.0, 14.0, 22.0, 18.0),
+            NormalLine(22.0, 18.0, 18.0, 18.0),
+            NormalLine(18.0, 18.0, 18.0, 14.0)
+        )
+
+        val result = BspTree.generateBsp(lines)
+
+        Assert.assertEquals(2, result!!.lines.size)
+    }
+
+    @Test
+    fun doesNotSplitConvex() {
+        val lines = listOf(
+            // room 303
+            NormalLine(10.0, 0.0, 18.0, 0.0),
+            NormalLine(18.0, 0.0, 18.0, 7.0),
+            NormalLine(18.0, 7.0, 10.0, 7.0),
+            NormalLine(10.0, 7.0, 10.0, 0.0),
+            // room 310
+            NormalLine(14.0, 11.0, 22.0, 11.0),
+            NormalLine(22.0, 11.0, 22.0, 14.0),
+            NormalLine(22.0, 14.0, 18.0, 14.0),
+            NormalLine(18.0, 14.0, 18.0, 18.0),
+            NormalLine(18.0, 18.0, 14.0, 18.0),
+            NormalLine(14.0, 18.0, 14.0, 11.0)
+        )
+
+        val result = BspTree.generateBsp(lines)
+
+        assertLeaf(result!!.back!!)
+
+        val frontFront = result.front!!.front
+        val frontBack = result.front!!.front
+        assertLeaf(frontBack!!)
+        assertLeaf(frontFront!!)
+        Assert.assertEquals(2, frontFront.convexLines.size)
+        Assert.assertEquals(2, frontBack.convexLines.size)
+    }
+/*
+    @Test
     fun doesNotSplitConvex() {
         val lines = listOf(
             // room 310
@@ -162,32 +220,5 @@ class BspTreeTest {
         assertLeaf(frontSplit.back!!)
         Assert.assertEquals(2, frontSplit.front!!.convexLines.size)
         Assert.assertEquals(2, frontSplit.back!!.convexLines.size)
-    }
-
-    @Test
-    fun doesJoinWrongLinesConvex() {
-        val lines = listOf(
-            // room 303
-            NormalLine(10.0, 0.0, 18.0, 0.0),
-            NormalLine(18.0, 0.0, 18.0, 7.0),
-            NormalLine(18.0, 7.0, 10.0, 7.0),
-            NormalLine(10.0, 7.0, 10.0, 0.0),
-            // room 310
-            NormalLine(14.0, 11.0, 22.0, 11.0),
-            NormalLine(22.0, 11.0, 22.0, 14.0),
-            NormalLine(22.0, 14.0, 18.0, 14.0),
-            NormalLine(18.0, 14.0, 18.0, 18.0),
-            NormalLine(18.0, 18.0, 14.0, 18.0),
-            NormalLine(14.0, 18.0, 14.0, 11.0),
-            // room 310a
-            NormalLine(18.0, 14.0, 22.0, 14.0),
-            NormalLine(22.0, 14.0, 22.0, 18.0),
-            NormalLine(22.0, 18.0, 18.0, 18.0),
-            NormalLine(18.0, 18.0, 18.0, 14.0)
-        )
-
-        val result = BspTree.generateBsp(lines)
-
-        Assert.assertEquals(2, result!!.lines.size)
-    }
+    }*/
 }

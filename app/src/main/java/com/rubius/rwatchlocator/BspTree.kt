@@ -63,7 +63,7 @@ class BspTree {
         }
 
         private fun generateBspInternal(lines: List<NormalLine>): TreeNode? {
-            if (lines.size > 2 && isConvex(lines)) {
+            if (isConvex(lines)) {
                 val result = TreeNode()
                 result.convexLines.addAll(lines)
                 return result
