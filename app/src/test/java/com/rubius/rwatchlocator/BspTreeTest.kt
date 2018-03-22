@@ -111,4 +111,22 @@ class BspTreeTest {
         Assert.assertEquals(1.0, result.lines[0].endX)
         Assert.assertEquals(1.0, result.lines[0].endY)
     }
+
+    @Test
+    fun correctConvexForSplit() {
+        val result = BspTree.generateBsp(listOf(
+            NormalLine(4.0, 7.0, 10.0, 7.0),
+            NormalLine(10.0, 7.0, 10.0, 11.0),
+            NormalLine(10.0, 11.0, 8.0, 11.0),
+            NormalLine(8.0, 11.0, 8.0, 14.0),
+            NormalLine(8.0, 14.0, 4.0, 14.0),
+            NormalLine(4.0, 14.0, 4.0, 7.0)
+        ))
+
+        Assert.assertEquals(1, result!!.lines.size)
+        Assert.assertEquals(0, result.front!!.lines.size)
+        Assert.assertEquals(0, result.back!!.lines.size)
+        Assert.assertEquals(3, result.front!!.convexLines.size)
+        Assert.assertEquals(3, result.back!!.convexLines.size)
+    }
 }

@@ -161,4 +161,15 @@ class NormalLineTest {
         Assert.assertEquals(2.0, point!!.x)
         Assert.assertEquals(2.0, point.y)
     }
+
+    @Test
+    fun canCompareIntersectionPointDirectly() {
+        val line1 = NormalLine(10.0, 11.0, 8.0, 11.0)
+        val line2 = NormalLine(10.0, 7.0, 10.0, 11.0)
+
+        val point = line1.getIntersection(line2, false)
+
+        Assert.assertEquals(line2.endX, point!!.x)
+        Assert.assertEquals(line2.endY, point.y)
+    }
 }

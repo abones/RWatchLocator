@@ -24,7 +24,10 @@ class BspTree {
                     else {
                         val point = line.getIntersection(secondLine, false)
                         if (point != null) {
-                            if (secondLine.startX == point.x && point.y == secondLine.startY)
+                            val pointAtLineEnd = (secondLine.startX == point.x && secondLine.startY == point.y) ||
+                                (secondLine.endX == point.x && secondLine.endY == point.y)
+
+                            if (pointAtLineEnd)
                                 placeLine(secondLine, currentSplit, sideStart)
                             else {
                                 val lineStart = NormalLine(secondLine.startX, secondLine.startY, point.x, point.y)
