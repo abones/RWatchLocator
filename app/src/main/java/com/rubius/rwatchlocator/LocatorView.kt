@@ -20,6 +20,18 @@ class LocatorView(
     private val roomPaint = Paint()
     var database: Database? = null
 
+    var minLevel: Int = 0
+        set (value) {
+            field = value
+            invalidate()
+        }
+
+    var maxLevel: Int = 0
+        set (value) {
+            field = value
+            invalidate()
+        }
+
     private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
     private val longPressDetector = GestureDetector(context, LongPressListener())
 
@@ -51,11 +63,13 @@ class LocatorView(
         if (node == null)
             return
 
-        //drawNodeLines(node.convexLines, canvas, Color.WHITE)
+        if (level >= minLevel && level <= maxLevel) {
+            //drawNodeLines(node.convexLines, canvas, Color.WHITE)
 
-        val isLeaf = false//node.front == null && node.back == null
-        val color = if (isLeaf) Color.BLACK else colors[level % colors.size]
-        drawNodeLines(node.lines, canvas, color)
+            val isLeaf = false//node.front == null && node.back == null
+            val color = if (isLeaf) Color.BLACK else colors[level % colors.size]
+            drawNodeLines(node.lines, canvas, color)
+        }
 
         drawNode(canvas, node.front, level + 1)
         drawNode(canvas, node.back, level + 1)

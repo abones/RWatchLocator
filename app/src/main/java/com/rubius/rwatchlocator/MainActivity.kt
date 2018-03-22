@@ -3,11 +3,11 @@ package com.rubius.rwatchlocator
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import android.widget.SeekBar
 import com.snatik.polygon.Point
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -216,6 +216,8 @@ class MainActivity : Activity() {
         locatorView.listener = { scale, translationX, translationY ->
             label.text = "$scale, $translationX, $translationY"
         }
+        seekBar.setOnSeekBarChangeListener(SeekBarListener(true))
+        seekBar2.setOnSeekBarChangeListener(SeekBarListener(false))
     }
 
     private fun printNode(prefix: String, node: TreeNode?, level: Int) {
@@ -224,5 +226,22 @@ class MainActivity : Activity() {
         Log.d("TREE", "${prefix}" + "    ".repeat(level) + "${level} ${node.lines.size}")
         printNode("f", node.front, level + 1)
         printNode("b", node.back, level + 1)
+    }
+
+    inner class SeekBarListener(private val isMin: Boolean): SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+            if (isMin)
+                locatorView.minLevel = p1
+            else
+                locatorView.maxLevel = p1
+        }
+
+        override fun onStartTrackingTouch(p0: SeekBar?) {
+
+        }
+
+        override fun onStopTrackingTouch(p0: SeekBar?) {
+
+        }
     }
 }
