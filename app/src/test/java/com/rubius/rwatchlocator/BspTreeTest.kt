@@ -30,7 +30,7 @@ class BspTreeTest {
         val result = BspTree.generateBsp(lines)
 
         assertLeaf(result!!)
-        Assert.assertEquals(1, result.lines.size)
+        Assert.assertEquals(1, result.convexLines.size)
     }
 
     /*@Test
@@ -76,27 +76,23 @@ class BspTreeTest {
     @Test
     fun oneInFrontOfOther() {
         val result = BspTree.generateBsp(listOf(
-            NormalLine(0.0, 0.0, 1.0, 0.0), // this one will become root
+            NormalLine(0.0, 0.0, 1.0, 0.0),
             NormalLine(0.0, 1.0, 1.0, 1.0)
         ))
 
-        Assert.assertNotNull(result!!.front)
-        Assert.assertNull(result.back)
-
-        assertLeaf(result.front!!)
+        assertLeaf(result!!)
+        Assert.assertEquals(2, result.convexLines.size)
     }
 
     @Test
     fun oneBehindAnother() {
         val result = BspTree.generateBsp(listOf(
-            NormalLine(0.0, 1.0, 1.0, 1.0), // this one will become root
+            NormalLine(0.0, 1.0, 1.0, 1.0),
             NormalLine(0.0, 0.0, 1.0, 0.0)
         ))
 
-        Assert.assertNull(result!!.front)
-        Assert.assertNotNull(result.back)
-
-        assertLeaf(result.back!!)
+        assertLeaf(result!!)
+        Assert.assertEquals(2, result.convexLines.size)
     }
 
     @Test
