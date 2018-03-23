@@ -284,4 +284,38 @@ class BspTreeTest {
 
         Assert.assertFalse(isConvex)
     }
+
+    @Test
+    fun correct2ConvexSplit() {
+        val lines = listOf(
+            // room 1
+            NormalLine(0.0, 0.0,2.0, 0.0),
+            NormalLine(2.0, 0.0,2.0, 2.0),
+            NormalLine(2.0, 2.0,0.0, 2.0),
+            NormalLine(0.0, 2.0,0.0, 0.0),
+
+            // room 2
+            NormalLine(2.0, 0.0,3.0, 0.0),
+            NormalLine(3.0, 0.0,3.0, 1.0),
+            NormalLine(3.0, 1.0,2.0, 1.0),
+            NormalLine(2.0, 1.0,2.0, 0.0)
+        )
+
+        val result = BspTree.generateBsp(lines)
+
+        Assert.assertEquals(1, result!!.lines.size)
+        Assert.assertEquals(0, result.convexLines.size)
+
+        val line = result.lines[0]
+        Assert.assertEquals(2.0, line.startX)
+        Assert.assertEquals(0.0, line.startY)
+        Assert.assertEquals(2.0, line.endX)
+        Assert.assertEquals(2.0, line.endY)
+
+        assertLeaf(result.front!!)
+        assertLeaf(result.back!!)
+
+        Assert.assertEquals(3, result.front!!.convexLines.size)
+        Assert.assertEquals(3, result.back!!.convexLines.size)
+    }
 }

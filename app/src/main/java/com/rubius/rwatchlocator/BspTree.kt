@@ -62,7 +62,7 @@ class BspTree {
             }
         }
 
-        private fun generateBspInternal(lines: List<NormalLine>): TreeNode? {
+        fun generateBsp(lines: List<NormalLine>): TreeNode? {
             if (isConvex(lines)) {
                 val result = TreeNode()
                 result.convexLines.addAll(lines)
@@ -105,8 +105,10 @@ class BspTree {
                     curStartX = line.minX
                     curStartY = line.minY
                 }
-                curEndX = line.maxX
-                curEndY = line.maxY
+                if (line.maxX > curEndX)
+                    curEndX = line.maxX
+                if (line.maxY > curEndY)
+                    curEndY = line.maxY
             }
             result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
 
@@ -130,7 +132,7 @@ class BspTree {
                 //Log.d("TAGG", "Angle between ${lines[i-1]} and ${lines[i]} is ${getAngle(angle)}")
 
                 angleSum += angle
-                        if (Math.abs(angleSum) > Math.PI * 2)
+                if (Math.abs(angleSum) > Math.PI * 2)
                     return false
             }
             return true
@@ -138,18 +140,6 @@ class BspTree {
 
         private fun getAngle(angle: Double): Double {
             return angle * 180.0 / Math.PI
-        }
-
-        fun generateBsp(lines: List<NormalLine>): TreeNode? {
-            val newLines = getOptimizedLines(lines)
-            return generateBspInternal(newLines)
-        }
-
-        private fun getOptimizedLines(lines: List<NormalLine>): List<NormalLine> {
-            val sameVerticalLines = mapOf<Double, NormalLine>()
-            val sameLines = mapOf<Pair<Double, Double>, NormalLine>()
-            val result = arrayListOf<NormalLine>()
-            return lines
         }
     }
 }
