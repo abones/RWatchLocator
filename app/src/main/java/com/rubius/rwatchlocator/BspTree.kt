@@ -8,46 +8,49 @@ class BspTree {
         private fun getSplittingLine(lines: List<NormalLine>): TreeNode? {
             var minSum = lines.size
             var bestSplit: TreeNode? = null
-            for (line in lines) {
-                val currentSplit = TreeNode()
-                currentSplit.lines.add(line)
+            for (potentialSplitLine in lines) {
+                val potentialSplit = TreeNode()
+                potentialSplit.lines.add(potentialSplitLine)
 
-                for (secondLine in lines) {
-                    if (secondLine === line)
+                var splitCount = 0
+
+                for (currentLine in lines) {
+                    if (currentLine === potentialSplitLine)
                         continue
 
-                    val sideStart = line.getSide(secondLine.startX, secondLine.startY)
-                    val sideEnd = line.getSide(secondLine.endX, secondLine.endY)
+                    val sideStart = potentialSplitLine.getSide(currentLine.startX, currentLine.startY)
+                    val sideEnd = potentialSplitLine.getSide(currentLine.endX, currentLine.endY)
 
                     if (sideStart == sideEnd)
-                        placeLine(secondLine, currentSplit, sideStart)
+                        placeLine(currentLine, potentialSplit, sideStart)
                     else {
-                        val point = line.getIntersection(secondLine, false)
+                        val point = potentialSplitLine.getIntersection(currentLine, false)
                         if (point != null) {
-                            val pointAtLineStart = secondLine.startX == point.x && secondLine.startY == point.y
-                            val pointAtLineEnd = secondLine.endX == point.x && secondLine.endY == point.y
+                            val pointAtLineStart = currentLine.startX == point.x && currentLine.startY == point.y
+                            val pointAtLineEnd = currentLine.endX == point.x && currentLine.endY == point.y
 
                             when {
-                                pointAtLineStart -> placeLine(secondLine, currentSplit, sideEnd)
-                                pointAtLineEnd -> placeLine(secondLine, currentSplit, sideStart)
+                                pointAtLineStart -> placeLine(currentLine, potentialSplit, sideEnd)
+                                pointAtLineEnd -> placeLine(currentLine, potentialSplit, sideStart)
                                 else -> {
-                                    val lineStart = NormalLine(secondLine.startX, secondLine.startY, point.x, point.y)
-                                    val lineEnd = NormalLine(point.x, point.y, secondLine.endX, secondLine.endY)
-                                    placeLine(lineStart, currentSplit, sideStart)
-                                    placeLine(lineEnd, currentSplit, sideEnd)
+                                    val lineStart = NormalLine(currentLine.startX, currentLine.startY, point.x, point.y)
+                                    val lineEnd = NormalLine(point.x, point.y, currentLine.endX, currentLine.endY)
+                                    placeLine(lineStart, potentialSplit, sideStart)
+                                    placeLine(lineEnd, potentialSplit, sideEnd)
+                                    ++splitCount
                                 }
                             }
                         }
                     }
                 }
 
-                val sum = Math.abs(currentSplit.pendingFront.size - currentSplit.pendingBack.size)
+                val sum = Math.abs(potentialSplit.pendingFront.size - potentialSplit.pendingBack.size) + splitCount
 
-                if (sum== 0)
-                    return currentSplit // no point in looking further
+                if (sum == 0)
+                    return potentialSplit // no point in looking further
                 if (sum < minSum) {
                     minSum = sum
-                    bestSplit = currentSplit
+                    bestSplit = potentialSplit
                 }
             }
 
