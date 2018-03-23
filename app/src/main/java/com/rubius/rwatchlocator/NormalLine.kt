@@ -25,8 +25,8 @@ data class NormalLine(val startX: Double, val startY: Double, val endX: Double, 
     fun getSide(x: Double, y: Double): Side {
         val dot = normal.dot(x - startX, y - startY)
         return when {
-            dot < -Constants.PRECISION -> Side.BACK
-            dot > Constants.PRECISION -> Side.FRONT
+            dot < -Constants.PRECISION -> Side.FRONT
+            dot > Constants.PRECISION -> Side.BACK
             else -> Side.COLLINEAR
         }
     }

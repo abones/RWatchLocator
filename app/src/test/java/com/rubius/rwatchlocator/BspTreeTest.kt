@@ -174,14 +174,14 @@ class BspTreeTest {
 
         val result = BspTree.generateBsp(lines)
 
-        assertLeaf(result!!.back!!)
+        assertLeaf(result!!.front!!)
 
-        val frontFront = result.front!!.front
-        val frontBack = result.front!!.front
-        assertLeaf(frontBack!!)
-        assertLeaf(frontFront!!)
-        Assert.assertEquals(2, frontFront.convexLines.size)
-        Assert.assertEquals(2, frontBack.convexLines.size)
+        val backFront = result.back!!.front
+        val backBack = result.back!!.front
+        assertLeaf(backBack!!)
+        assertLeaf(backFront!!)
+        Assert.assertEquals(2, backFront.convexLines.size)
+        Assert.assertEquals(2, backBack.convexLines.size)
     }
 /*
     @Test
