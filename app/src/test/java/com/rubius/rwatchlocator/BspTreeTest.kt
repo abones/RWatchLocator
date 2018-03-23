@@ -245,7 +245,7 @@ class BspTreeTest {
     }
 
     @Test
-    fun leftConvex() {
+    fun rightWoundNotConvex() {
         val lines = listOf(
             NormalLine(0.0, 0.0, 0.0, 1.0),
             NormalLine(0.0, 1.0, 1.0, 1.0),
@@ -254,7 +254,7 @@ class BspTreeTest {
 
         val isConvex = BspTree.isConvex(lines)
 
-        Assert.assertTrue(isConvex)
+        Assert.assertFalse(isConvex)
     }
 
     @Test
@@ -272,17 +272,51 @@ class BspTreeTest {
     }
 
     @Test
-    fun obtuse2NotConvex() {
+    fun leftWoundIsConvex() {
         val lines = listOf(
-            //NormalLine(10.0, 10.0, 0.0, 5.0),
-            //NormalLine(0.0, 5.0, 10.0, 0.0)
             NormalLine(1.0, 1.0, 0.0, 0.0),
             NormalLine(0.0, 0.0, 1.0, 0.0)
         )
 
         val isConvex = BspTree.isConvex(lines)
 
-        Assert.assertFalse(isConvex)
+        Assert.assertTrue(isConvex)
+    }
+
+    @Test
+    fun leftWound2IsConvex() {
+        val lines = listOf(
+            NormalLine(1.0, 3.0, 1.0, 1.0),
+            NormalLine(1.0, 1.0, 2.0, 1.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertTrue(isConvex)
+    }
+
+    @Test
+    fun partOfLeftWoundSquareIsConvex() {
+        val line1 = NormalLine(0.0, 0.0, 2.0, 0.0)
+        val line2 = NormalLine(2.0, 0.0, 2.0, 2.0)
+        val line3 = NormalLine(2.0, 2.0, 0.0, 2.0)
+        val line4 = NormalLine(0.0, 2.0, 0.0, 0.0)
+
+        val linesFull = listOf(line1, line2, line3, line4)
+
+        for (startIndex in 0 until linesFull.size) {
+            for (endIndex in startIndex + 1..linesFull.size) {
+                val sublist = linesFull.subList(startIndex, endIndex)
+                val isConvex = BspTree.isConvex(sublist)
+                Assert.assertTrue("Sublist $sublist failed", isConvex)
+            }
+        }
+
+        val isConvexSkip1 = BspTree.isConvex(listOf(line1, line3))
+        Assert.assertTrue(isConvexSkip1)
+
+        //val isConvexSkip2 = BspTree.isConvex(listOf(line1, line4)) // won't work, this is already larger than pi
+        //Assert.assertTrue(isConvexSkip2)
     }
 
     @Test

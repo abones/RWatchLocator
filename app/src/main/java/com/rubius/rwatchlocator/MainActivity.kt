@@ -24,7 +24,7 @@ class MainActivity : Activity() {
                     Point(1.0, 3.0),
                     Point(0.0, 3.0)
                 )
-            ),*/
+            ),
             Room(
                 "302",
                 listOf(
@@ -42,8 +42,8 @@ class MainActivity : Activity() {
                     Point(3.0, 1.0),
                     Point(2.0, 1.0)
                 )
-            )
-            /*Room(
+            )*/
+            Room(
                 "301",
                 listOf(
                     Point(0.0, 7.0),
@@ -235,7 +235,7 @@ class MainActivity : Activity() {
                     Point(45.0, 18.0),
                     Point(42.0, 18.0)
                 )
-            )*/
+            )
         )
         //locatorView.database!!.rooms = genRooms(10, 7)
 

@@ -43,7 +43,7 @@ class BspTree {
 
                 val sum = Math.abs(currentSplit.pendingFront.size - currentSplit.pendingBack.size)
 
-                if (sum == 0)
+                if (sum== 0)
                     return currentSplit // no point in looking further
                 if (sum < minSum) {
                     minSum = sum
