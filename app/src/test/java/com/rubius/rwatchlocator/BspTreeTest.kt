@@ -256,4 +256,32 @@ class BspTreeTest {
 
         Assert.assertTrue(isConvex)
     }
+
+    @Test
+    fun obtuseNotConvex() {
+        val lines = listOf(
+            NormalLine(0.0, 7.0, 6.0, 6.0),
+            NormalLine(6.0, 6.0, 1.0, 1.0)
+            //NormalLine(4.0, 9.0, 0.0, 7.0),
+            //NormalLine(0.0, 7.0, 6.0, 6.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertFalse(isConvex)
+    }
+
+    @Test
+    fun obtuse2NotConvex() {
+        val lines = listOf(
+            //NormalLine(10.0, 10.0, 0.0, 5.0),
+            //NormalLine(0.0, 5.0, 10.0, 0.0)
+            NormalLine(1.0, 1.0, 0.0, 0.0),
+            NormalLine(0.0, 0.0, 1.0, 0.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertFalse(isConvex)
+    }
 }

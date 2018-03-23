@@ -6,8 +6,11 @@ import android.util.Log
 import android.widget.SeekBar
 import com.snatik.polygon.Point
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : Activity() {
+    val random = Random()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -16,19 +19,10 @@ class MainActivity : Activity() {
             /*Room(
                 "301",
                 listOf(
-                    Point(0.0, 0.0),
-                    Point(0.0, 1.0),
                     Point(1.0, 1.0),
-                    Point(1.0, 0.0)
-                )
-            ),
-            Room(
-                "301",
-                listOf(
-                    Point(1.0, 0.0),
-                    Point(1.0, 1.0),
-                    Point(2.0, 1.0),
-                    Point(2.0, 0.0)
+                    Point(4.0, 9.0),
+                    Point(0.0, 7.0),
+                    Point(6.0, 6.0)
                 )
             )*/
             Room(
@@ -225,6 +219,7 @@ class MainActivity : Activity() {
                 )
             )
         )
+        //locatorView.database!!.rooms = genRooms(10, 7)
 
         printNode("r", locatorView.database!!.bspRoot, 0)
 
@@ -236,6 +231,28 @@ class MainActivity : Activity() {
         }
         seekBar.setOnSeekBarChangeListener(SeekBarListener(true))
         seekBar2.setOnSeekBarChangeListener(SeekBarListener(false))
+    }
+
+    private fun genRooms(maxRooms: Int, maxVerticesPerRoom: Int): List<Room> {
+        val result = arrayListOf<Room>()
+
+        var roomCount = 0
+        while (roomCount < maxRooms) {
+            val vertices = arrayListOf<Point>()
+            while (vertices.size < maxVerticesPerRoom) {
+                val x = -10.0 + (10.0 - (-10.0)) * random.nextDouble()
+                val y = -10.0 + (10.0 - (-10.0)) * random.nextDouble()
+                vertices.add(Point(x, y))
+
+                if (vertices.size > 3 && random.nextDouble() > 0.8)
+                    break
+            }
+            result.add(Room("", vertices))
+
+            ++roomCount
+        }
+
+        return result
     }
 
     private fun printNode(prefix: String, node: TreeNode?, level: Int) {

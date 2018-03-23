@@ -76,8 +76,8 @@ class VectorTest {
         val angle1 = v1.signedAngleBetween(v2)
         val angle2 = v2.signedAngleBetween(v1)
 
-        Assert.assertEquals(0.0, angle1)
-        Assert.assertEquals(0.0, angle2)
+        Assert.assertEquals(0.0, angle1, Constants.PRECISION)
+        Assert.assertEquals(0.0, angle2, Constants.PRECISION)
     }
 
     @Test
@@ -88,8 +88,8 @@ class VectorTest {
         val angle1 = v1.signedAngleBetween(v2)
         val angle2 = v2.signedAngleBetween(v1)
 
-        Assert.assertEquals(Math.PI / 4.0, angle1)
-        Assert.assertEquals(-Math.PI / 4.0, angle2)
+        Assert.assertEquals(Math.PI / 4.0, angle1, Constants.PRECISION)
+        Assert.assertEquals(-Math.PI / 4.0, angle2, Constants.PRECISION)
     }
 
     @Test
@@ -112,7 +112,17 @@ class VectorTest {
         val angle1 = v1.signedAngleBetween(v2)
         val angle2 = v2.signedAngleBetween(v1)
 
-        Assert.assertEquals(Math.PI, angle1)
-        Assert.assertEquals(Math.PI, angle2) // both positive
+        Assert.assertEquals(Math.PI, angle1, Constants.PRECISION)
+        Assert.assertEquals(Math.PI, angle2, Constants.PRECISION) // both positive
+    }
+
+    @Test
+    fun largePiAngle() {
+        val v1 = Vector(1.0, 0.0)
+        val v2 = Vector(-1.0, -1.0)
+
+        val angle1 = Math.PI + v1.angleBetween(v2)
+
+        Assert.assertEquals(Math.PI + Math.PI / 4, angle1)
     }
 }
