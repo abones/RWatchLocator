@@ -16,34 +16,16 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         locatorView.database = Database()
         locatorView.database!!.rooms = listOf(
-            /*Room(
+            Room(
                 "301",
                 listOf(
-                    Point(0.0, 2.0),
-                    Point(1.0, 2.0),
-                    Point(1.0, 3.0),
-                    Point(0.0, 3.0)
+                    Point(6.0, 5.0),
+                    Point(9.0, 1.0),
+                    Point(4.0, 6.0),
+                    Point(1.0, 6.0)
                 )
-            ),
-            Room(
-                "302",
-                listOf(
-                    Point(0.0, 0.0),
-                    Point(2.0, 0.0),
-                    Point(2.0, 2.0),
-                    Point(0.0, 2.0)
-                )
-            ),
-            Room(
-                "302a",
-                listOf(
-                    Point(2.0, 0.0),
-                    Point(3.0, 0.0),
-                    Point(3.0, 1.0),
-                    Point(2.0, 1.0)
-                )
-            )*/
-            Room(
+            )
+            /*Room(
                 "301",
                 listOf(
                     Point(0.0, 7.0),
@@ -235,9 +217,11 @@ class MainActivity : Activity() {
                     Point(45.0, 18.0),
                     Point(42.0, 18.0)
                 )
-            )
+            )*/
         )
-        //locatorView.database!!.rooms = genRooms(10, 7)
+        //locatorView.database!!.rooms = genRooms(1, 5)
+        for (room in locatorView.database!!.rooms)
+            Log.d("ROOM", "$room")
 
         printNode("r", locatorView.database!!.bspRoot, 0)
 

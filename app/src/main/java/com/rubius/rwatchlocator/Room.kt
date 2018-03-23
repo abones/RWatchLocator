@@ -27,4 +27,8 @@ class Room(val name: String, points: List<Point>) {
         polygon = polygonBuilder.build()
     }
 
+    override fun toString(): String {
+        return "Room(name='$name', path=${polygon.sides})"
+    }
+
 }
