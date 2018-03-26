@@ -6,7 +6,7 @@ package com.rubius.rwatchlocator
 class BspTree {
     companion object {
         private fun getSplittingLine(lines: List<NormalLine>): TreeNode? {
-            var minSum = lines.size
+            var minSum: Int? = null
             var bestSplit: TreeNode? = null
             for (potentialSplitLine in lines) {
                 val potentialSplit = TreeNode()
@@ -26,8 +26,8 @@ class BspTree {
                     else {
                         val point = potentialSplitLine.getIntersection(currentLine, false)
                         if (point != null) {
-                            val pointAtLineStart = currentLine.startX == point.x && currentLine.startY == point.y
-                            val pointAtLineEnd = currentLine.endX == point.x && currentLine.endY == point.y
+                            val pointAtLineStart = sideStart == NormalLine.Side.COLLINEAR
+                            val pointAtLineEnd = sideEnd == NormalLine.Side.COLLINEAR
 
                             when {
                                 pointAtLineStart -> placeLine(currentLine, potentialSplit, sideEnd)
@@ -48,7 +48,7 @@ class BspTree {
 
                 if (sum == 0)
                     return potentialSplit // no point in looking further
-                if (sum < minSum) {
+                if (minSum == null || sum < minSum) {
                     minSum = sum
                     bestSplit = potentialSplit
                 }

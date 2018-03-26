@@ -325,16 +325,16 @@ class BspTreeTest {
     fun correct2ConvexSplit() {
         val lines = listOf(
             // room 1
-            NormalLine(0.0, 0.0,2.0, 0.0),
-            NormalLine(2.0, 0.0,2.0, 2.0),
-            NormalLine(2.0, 2.0,0.0, 2.0),
-            NormalLine(0.0, 2.0,0.0, 0.0),
+            NormalLine(0.0, 0.0, 2.0, 0.0),
+            NormalLine(2.0, 0.0, 2.0, 2.0),
+            NormalLine(2.0, 2.0, 0.0, 2.0),
+            NormalLine(0.0, 2.0, 0.0, 0.0),
 
             // room 2
-            NormalLine(2.0, 0.0,3.0, 0.0),
-            NormalLine(3.0, 0.0,3.0, 1.0),
-            NormalLine(3.0, 1.0,2.0, 1.0),
-            NormalLine(2.0, 1.0,2.0, 0.0)
+            NormalLine(2.0, 0.0, 3.0, 0.0),
+            NormalLine(3.0, 0.0, 3.0, 1.0),
+            NormalLine(3.0, 1.0, 2.0, 1.0),
+            NormalLine(2.0, 1.0, 2.0, 0.0)
         )
 
         val result = BspTree.generateBsp(lines)
@@ -353,5 +353,23 @@ class BspTreeTest {
 
         Assert.assertEquals(3, result.front!!.convexLines.size)
         Assert.assertEquals(3, result.back!!.convexLines.size)
+    }
+
+    @Test
+    fun correctSelfIntersectSplit() {
+        val lines = listOf(
+            NormalLine(6.0, 5.0, 9.0, 1.0),
+            NormalLine(9.0, 1.0, 4.0, 6.0),
+            NormalLine(4.0, 6.0, 1.0, 6.0),
+            NormalLine(1.0, 6.0, 6.0, 5.0)
+        )
+
+        val result = BspTree.generateBsp(lines)
+
+        val line = result!!.lines[0]
+        Assert.assertEquals(9.0, line.startX)
+        Assert.assertEquals(1.0, line.startY)
+        Assert.assertEquals(4.0, line.endX)
+        Assert.assertEquals(6.0, line.endY)
     }
 }

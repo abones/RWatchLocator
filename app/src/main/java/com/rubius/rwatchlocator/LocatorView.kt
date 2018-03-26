@@ -80,6 +80,7 @@ class LocatorView(
             debugPaint.color = color
             canvas.drawLine(line.startX.toFloat(), line.startY.toFloat(), line.endX.toFloat(), line.endY.toFloat(), debugPaint)
 
+            // draw normal
             canvas.save()
 
             canvas.translate((line.endX + line.startX).toFloat() / 2.0f, (line.endY + line.startY).toFloat() / 2.0f)
