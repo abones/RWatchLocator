@@ -118,7 +118,7 @@ class LocatorView(
         canvas.restore()
 
         for (room in database!!.rooms) {
-            room.path.transform(drawMatrix, drawPath)
+            room.path!!.transform(drawMatrix, drawPath)
             //roomPaint.shader.setLocalMatrix(drawMatrix)
             canvas.drawPath(drawPath, roomPaint)
         }

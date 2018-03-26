@@ -19,15 +19,6 @@ class MainActivity : Activity() {
             Room(
                 "301",
                 listOf(
-                    Point(6.0, 5.0),
-                    Point(9.0, 1.0),
-                    Point(4.0, 6.0),
-                    Point(1.0, 6.0)
-                )
-            )
-            /*Room(
-                "301",
-                listOf(
                     Point(0.0, 7.0),
                     Point(4.0, 7.0),
                     Point(4.0, 14.0),
@@ -217,9 +208,9 @@ class MainActivity : Activity() {
                     Point(45.0, 18.0),
                     Point(42.0, 18.0)
                 )
-            )*/
+            )
         )
-        //locatorView.database!!.rooms = genRooms(1, 5)
+        //locatorView.database!!.rooms = genRooms(10, 7)
         for (room in locatorView.database!!.rooms)
             Log.d("ROOM", "$room")
 
