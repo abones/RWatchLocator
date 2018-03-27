@@ -3,7 +3,6 @@ package com.rubius.rwatchlocator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -260,13 +259,13 @@ class LocatorView(
 
     inner class LongPressListener : GestureDetector.SimpleOnGestureListener() {
         override fun onLongPress(e: MotionEvent?) {
-            if (e != null) {
-                val x = screenToWorldX(e.x)
-                val y = screenToWorldY(e.y)
-                Log.d("TAGGG", "${e.x},${e.y} -> $x,$y")
-                database!!.anchorPoints.add(AnchorPoint(x.toDouble(), y.toDouble()))
-                invalidate()
-            }
+            if (e == null)
+                return
+
+            val x = screenToWorldX(e.x)
+            val y = screenToWorldY(e.y)
+            database?.anchorPoints?.add(AnchorPoint(x.toDouble(), y.toDouble()))
+            invalidate()
         }
     }
 

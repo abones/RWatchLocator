@@ -19,10 +19,10 @@ class NormalLineTest {
 
     @Test
     fun lineNormalizesVector() {
-        val line1 = NormalLine(quadrant1Line)
-        val line2 = NormalLine(quadrant2Line)
-        val line3 = NormalLine(quadrant3Line)
-        val line4 = NormalLine(quadrant4Line)
+        val line1 = NormalLine(quadrant1Line.start.x, quadrant1Line.start.y, quadrant1Line.end.x, quadrant1Line.start.y)
+        val line2 = NormalLine(quadrant2Line.start.x, quadrant2Line.start.y, quadrant2Line.end.x, quadrant2Line.start.y)
+        val line3 = NormalLine(quadrant3Line.start.x, quadrant3Line.start.y, quadrant3Line.end.x, quadrant3Line.start.y)
+        val line4 = NormalLine(quadrant4Line.start.x, quadrant4Line.start.y, quadrant4Line.end.x, quadrant4Line.start.y)
 
         Assert.assertEquals(1.0, line1.normal.length, Constants.PRECISION)
         Assert.assertEquals(1.0, line2.normal.length, Constants.PRECISION)
@@ -32,10 +32,10 @@ class NormalLineTest {
 
     @Test
     fun lineHasCorrectNormal() {
-        val line1 = NormalLine(quadrant1Line)
-        val line2 = NormalLine(quadrant2Line)
-        val line3 = NormalLine(quadrant3Line)
-        val line4 = NormalLine(quadrant4Line)
+        val line1 = NormalLine(quadrant1Line.start.x, quadrant1Line.start.y, quadrant1Line.end.x, quadrant1Line.end.y)
+        val line2 = NormalLine(quadrant2Line.start.x, quadrant2Line.start.y, quadrant2Line.end.x, quadrant2Line.end.y)
+        val line3 = NormalLine(quadrant3Line.start.x, quadrant3Line.start.y, quadrant3Line.end.x, quadrant3Line.end.y)
+        val line4 = NormalLine(quadrant4Line.start.x, quadrant4Line.start.y, quadrant4Line.end.x, quadrant4Line.end.y)
 
         Assert.assertEquals(-UNIT_VECTOR_COORDINATE, line1.normal.x, Constants.PRECISION)
         Assert.assertEquals(UNIT_VECTOR_COORDINATE, line1.normal.y, Constants.PRECISION)
