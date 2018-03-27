@@ -115,7 +115,7 @@ class BspTree {
             val isXPositive = isPositive(startLine.startX, startLine.endX)
             val isYPositive = isPositive(startLine.startY, startLine.endY)
 
-            split.lines.sortWith(compareBy({ it.minX }, { it.minY }))
+            split.lines.sortWith(compareBy({ if (isXPositive) it.minX else -it.maxX }, { if (isYPositive) it.minY else -it.maxY }))
 
             val result = arrayListOf<NormalLine>()
 
@@ -195,7 +195,7 @@ class BspTree {
         private fun isInsideConvex(convexLines: ArrayList<NormalLine>, point: Vector): Boolean {
             return convexLines.all {
                 val side = it.getSide(point.x, point.y)
-                 side == NormalLine.Side.COLLINEAR || side == NormalLine.Side.FRONT
+                side == NormalLine.Side.COLLINEAR || side == NormalLine.Side.FRONT
             }
         }
     }

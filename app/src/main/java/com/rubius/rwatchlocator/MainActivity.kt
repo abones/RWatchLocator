@@ -21,7 +21,7 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         locatorView.database = Database()
         locatorView.database!!.rooms = listOf(
-            /*Room(
+            Room(
                 "301",
                 listOf(
                     Point(0.0, 7.0),
@@ -29,8 +29,8 @@ class MainActivity : Activity() {
                     Point(4.0, 14.0),
                     Point(0.0, 14.0)
                 )
-            ),*/
-            /*Room(
+            ),
+            Room(
                 "302",
                 listOf(
                     Point(0.0, 0.0),
@@ -38,8 +38,8 @@ class MainActivity : Activity() {
                     Point(8.0, 7.0),
                     Point(0.0, 7.0)
                 )
-            ),*/
-            /*Room(
+            ),
+            Room(
                 "302a",
                 listOf(
                     Point(8.0, 0.0),
@@ -47,7 +47,7 @@ class MainActivity : Activity() {
                     Point(10.0, 5.0),
                     Point(8.0, 5.0)
                 )
-            ),*/
+            ),
             Room(
                 "302b",
                 listOf(
@@ -65,7 +65,7 @@ class MainActivity : Activity() {
                     Point(18.0, 7.0),
                     Point(10.0, 7.0)
                 )
-            )/*,
+            ),/*
             Room(
                 "304a",
                 listOf(
@@ -101,7 +101,7 @@ class MainActivity : Activity() {
                     Point(45.0, 7.0),
                     Point(30.0, 7.0)
                 )
-            ),
+            ),*/
             Room(
                 "H2",
                 listOf(
@@ -110,8 +110,8 @@ class MainActivity : Activity() {
                     Point(45.0, 11.0),
                     Point(10.0, 11.0)
                 )
-            ),
-            Room(
+            )
+            /*Room(
                 "H2",
                 listOf(
                     Point(10.0, 7.0),

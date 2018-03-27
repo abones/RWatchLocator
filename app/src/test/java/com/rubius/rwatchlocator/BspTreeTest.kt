@@ -526,4 +526,37 @@ class BspTreeTest {
         Assert.assertEquals("303", rooms[1].name)
         Assert.assertSame(rooms[1], rightLeaf!!.room)
     }
+
+    @Test
+    fun doesNotLoseSplitLines() {
+        val rooms = listOf(
+            Room(
+                "303",
+                listOf(
+                    Point(10.0, 0.0),
+                    Point(18.0, 0.0),
+                    Point(18.0, 7.0),
+                    Point(10.0, 7.0)
+                )
+            ),
+            Room(
+                "H2",
+                listOf(
+                    Point(10.0, 7.0),
+                    Point(45.0, 7.0),
+                    Point(45.0, 11.0),
+                    Point(10.0, 11.0)
+                )
+            )
+        )
+
+        val lines = rooms.flatMap { it.lines }
+
+        val result = BspTree.generateBsp(lines)
+
+        Assert.assertEquals(1, result!!.lines.size)
+        val line = result.lines[0]
+        Assert.assertEquals(45.0, line.startX)
+        Assert.assertEquals(10.0, line.endX)
+    }
 }
