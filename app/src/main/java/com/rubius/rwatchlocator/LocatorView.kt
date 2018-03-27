@@ -267,7 +267,7 @@ class LocatorView(
             val y = screenToWorldY(e.y)
             val point = Vector(x.toDouble(), y.toDouble())
 
-            val node = BspTree.getLeaf(database?.bspRoot, point)
+            val node = BspTree.getLeaf(database?.bspRoot!!, point)
 
             if (node != null) {
                 node.addAnchorPoint(AnchorPoint(point.x, point.y))

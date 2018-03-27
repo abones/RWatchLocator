@@ -433,7 +433,7 @@ class BspTreeTest {
 
         val result = BspTree.generateBsp(lines)
 
-        val leaf = BspTree.getLeaf(result, Vector(9.0, 8.0))
+        val leaf = BspTree.getLeaf(result!!, Vector(9.0, 8.0))
 
         Assert.assertNull(leaf)
     }
@@ -505,10 +505,10 @@ class BspTreeTest {
         val result = BspTree.generateBsp(lines)
 
         val leftPoint = Vector(9.0, 6.0)
-        val leftLeaf = BspTree.getLeaf(result, leftPoint)
+        val leftLeaf = BspTree.getLeaf(result!!, leftPoint)
 
         val rightPoint = Vector(11.0, 5.0)
-        val rightLeaf = BspTree.getLeaf(result, rightPoint)
+        val rightLeaf = BspTree.getLeaf(result!!, rightPoint)
 
         Assert.assertEquals("302b", rooms[0].name)
         Assert.assertSame(rooms[0], leftLeaf!!.room)
@@ -651,6 +651,19 @@ class BspTreeTest {
             NormalLine(10.0, 5.0, 10.0, 7.0),
             NormalLine(8.0, 7.0, 8.0, 5.0),
             NormalLine(10.0, 7.0, 10.0, 5.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertFalse(isConvex)
+    }
+
+    @Test
+    fun threeParallelLinesAreNotConvex2() {
+        val lines = listOf(
+            NormalLine(10.0, 14.0, 8.0, 14.0),
+            NormalLine(8.0, 14.0, 10.0, 14.0),
+            NormalLine(10.0, 18.0, 8.0, 18.0)
         )
 
         val isConvex = BspTree.isConvex(lines)

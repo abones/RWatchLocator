@@ -75,6 +75,8 @@ class BspTree {
 
             val split = getSplittingLine(lines) ?: return null
 
+            split.room = split.lines[0].room
+
             optimizeLines(split)
 
             if (split.pendingFront.size > 0) {
@@ -165,7 +167,7 @@ class BspTree {
                 val normal2 = curLine.normal
 
                 val angle = normal1.signedAngleBetween(normal2)
-                if (angle < 0)
+                if (angle < 0 || angle >= Math.PI)
                     return false
 
                 angleSum += angle
@@ -183,10 +185,7 @@ class BspTree {
             return angle * 180.0 / Math.PI
         }
 
-        fun getLeaf(node: TreeNode?, point: Vector): TreeNode? {
-            if (node == null)
-                return null
-
+        fun getLeaf(node: TreeNode, point: Vector): TreeNode? {
             if (node.convexLines.size > 0)
                 return if (isInsideConvex(node.convexLines, point))
                     node
@@ -197,8 +196,8 @@ class BspTree {
 
             return when (side) {
                 NormalLine.Side.COLLINEAR -> node
-                NormalLine.Side.BACK -> getLeaf(node.back, point)
-                NormalLine.Side.FRONT -> getLeaf(node.front, point)
+                NormalLine.Side.BACK -> if (node.back == null) node else getLeaf(node.back!!, point)
+                NormalLine.Side.FRONT -> if (node.front == null) node else getLeaf(node.front!!, point)
             }
         }
 

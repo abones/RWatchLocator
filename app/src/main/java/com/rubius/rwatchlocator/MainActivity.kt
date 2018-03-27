@@ -110,7 +110,7 @@ class MainActivity : Activity() {
                     Point(45.0, 11.0),
                     Point(10.0, 11.0)
                 )
-            ),
+            ),/*
             Room(
                 "H2",
                 listOf(
@@ -119,7 +119,7 @@ class MainActivity : Activity() {
                     Point(45.0, 11.0),
                     Point(10.0, 11.0)
                 )
-            ),
+            ),*/
             Room(
                 "H1",
                 listOf(
