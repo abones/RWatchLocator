@@ -268,13 +268,18 @@ class LocatorView(
             val point = Vector(x.toDouble(), y.toDouble())
 
             val node = BspTree.getLeaf(database?.bspRoot, point)
-            node?.addAnchorPoint(AnchorPoint(point.x, point.y))
+
+            if (node != null) {
+                node.addAnchorPoint(AnchorPoint(point.x, point.y))
+                onPointAdded?.invoke(node.room, point.x, point.y)
+            }
 
             invalidate()
         }
     }
 
     var listener: ((scale: Float, translationX: Float, translationY: Float) -> Unit)? = null
+    var onPointAdded: ((room: Room?, x: Double, y: Double) -> Unit)? = null
 }
 
 fun Float.clamp(min: Float, max: Float): Float {

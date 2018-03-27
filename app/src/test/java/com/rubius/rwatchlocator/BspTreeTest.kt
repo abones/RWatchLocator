@@ -1,5 +1,6 @@
 package com.rubius.rwatchlocator
 
+import com.snatik.polygon.Point
 import junit.framework.Assert
 import org.junit.Test
 
@@ -371,5 +372,48 @@ class BspTreeTest {
         Assert.assertEquals(1.0, line.startY)
         Assert.assertEquals(4.0, line.endX)
         Assert.assertEquals(6.0, line.endY)
+    }
+
+    @Test
+    fun noUnknownRooms() {
+        val rooms = listOf(
+            Room(
+                "301",
+                listOf(
+                    Point(0.0, 7.0),
+                    Point(4.0, 7.0),
+                    Point(4.0, 14.0),
+                    Point(0.0, 14.0)
+                )
+            ),
+            Room(
+                "302",
+                listOf(
+                    Point(0.0, 0.0),
+                    Point(8.0, 0.0),
+                    Point(8.0, 7.0),
+                    Point(0.0, 7.0)
+                )
+            ),
+            Room(
+                "302a",
+                listOf(
+                    Point(8.0, 0.0),
+                    Point(10.0, 0.0),
+                    Point(10.0, 5.0),
+                    Point(8.0, 5.0)
+                )
+            )
+        )
+
+        val lines = rooms.flatMap { it.lines }
+
+        val result = BspTree.generateBsp(lines)
+
+        val problematicNode = result!!.back!!.front!!
+
+        Assert.assertEquals(2, problematicNode.convexLines.size)
+        Assert.assertNotNull(problematicNode.room)
+        Assert.assertSame(problematicNode.room, rooms[1])
     }
 }

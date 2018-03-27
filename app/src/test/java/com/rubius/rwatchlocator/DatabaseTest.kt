@@ -27,11 +27,6 @@ class DatabaseTest {
     }
 
     @Test
-    fun startsWithoutAnchors() {
-        Assert.assertEquals(0, database.anchorPoints.size)
-    }
-
-    @Test
     fun startsWithoutBsp() {
         Assert.assertNull(database.bspRoot)
     }

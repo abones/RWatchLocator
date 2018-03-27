@@ -1,9 +1,14 @@
 package com.rubius.rwatchlocator
 
 import android.app.Activity
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.widget.SeekBar
+import android.widget.Toast
 import com.snatik.polygon.Point
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -42,7 +47,7 @@ class MainActivity : Activity() {
                     Point(10.0, 5.0),
                     Point(8.0, 5.0)
                 )
-            ),
+            )/*,
             Room(
                 "302b",
                 listOf(
@@ -208,7 +213,7 @@ class MainActivity : Activity() {
                     Point(45.0, 18.0),
                     Point(42.0, 18.0)
                 )
-            )
+            )*/
         )
         //locatorView.database!!.rooms = genRooms(10, 7)
         for (room in locatorView.database!!.rooms)
@@ -221,6 +226,18 @@ class MainActivity : Activity() {
         }
         locatorView.listener = { scale, translationX, translationY ->
             label.text = "$scale, $translationX, $translationY"
+        }
+        locatorView.onPointAdded = { room, _, _ ->
+            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(60, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                // deprecated in API 26
+                vibrator.vibrate(60)
+            }
+
+            val roomName = if (room == null) "Unknown" else room.name
+            Toast.makeText(this, "Added to room $roomName", Toast.LENGTH_SHORT).show()
         }
         seekBar.setOnSeekBarChangeListener(SeekBarListener(true))
         seekBar2.setOnSeekBarChangeListener(SeekBarListener(false))

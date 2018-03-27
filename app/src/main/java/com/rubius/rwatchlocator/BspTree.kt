@@ -33,8 +33,8 @@ class BspTree {
                                 pointAtLineStart -> placeLine(currentLine, potentialSplit, sideEnd)
                                 pointAtLineEnd -> placeLine(currentLine, potentialSplit, sideStart)
                                 else -> {
-                                    val lineStart = NormalLine(currentLine.startX, currentLine.startY, point.x, point.y)
-                                    val lineEnd = NormalLine(point.x, point.y, currentLine.endX, currentLine.endY)
+                                    val lineStart = NormalLine(currentLine.startX, currentLine.startY, point.x, point.y, currentLine.room)
+                                    val lineEnd = NormalLine(point.x, point.y, currentLine.endX, currentLine.endY, currentLine.room)
                                     placeLine(lineStart, potentialSplit, sideStart)
                                     placeLine(lineEnd, potentialSplit, sideEnd)
                                     ++splitCount
