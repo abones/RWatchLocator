@@ -481,5 +481,49 @@ class BspTreeTest {
         Assert.assertEquals(5.0, line.startY)
         Assert.assertEquals(8.0, line.endX)
         Assert.assertEquals(5.0, line.endY)
+
+        Assert.assertEquals("302a", rooms[0].name)
+        Assert.assertSame(rooms[0], result.front!!.room)
+        Assert.assertEquals("302b", rooms[1].name)
+        Assert.assertSame(rooms[1], result.back!!.room)
+    }
+
+    @Test
+    fun getsRightRoomCorrectly() {
+        val rooms = listOf(
+            Room(
+                "302b",
+                listOf(
+                    Point(8.0, 5.0),
+                    Point(10.0, 5.0),
+                    Point(10.0, 7.0),
+                    Point(8.0, 7.0)
+                )
+            ),
+            Room(
+                "303",
+                listOf(
+                    Point(10.0, 0.0),
+                    Point(18.0, 0.0),
+                    Point(18.0, 7.0),
+                    Point(10.0, 7.0)
+                )
+            )
+        )
+
+        val lines = rooms.flatMap { it.lines }
+
+        val result = BspTree.generateBsp(lines)
+
+        val leftPoint = Vector(9.0, 6.0)
+        val leftLeaf = BspTree.getLeaf(result, leftPoint)
+
+        val rightPoint = Vector(11.0, 5.0)
+        val rightLeaf = BspTree.getLeaf(result, rightPoint)
+
+        Assert.assertEquals("302b", rooms[0].name)
+        Assert.assertSame(rooms[0], leftLeaf!!.room)
+        Assert.assertEquals("303", rooms[1].name)
+        Assert.assertSame(rooms[1], rightLeaf!!.room)
     }
 }

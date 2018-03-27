@@ -218,5 +218,15 @@ class NormalLineTest {
 
         Assert.assertEquals(NormalLine.Side.FRONT, side)
     }
+
+    @Test
+    fun correctSideForPoint2() {
+        val line = NormalLine(10.0, 7.0, 10.0, 0.0)
+        val point = Vector(8.0, 5.0)
+
+        val side = line.getSide(point.x, point.y)
+
+        Assert.assertEquals(NormalLine.Side.BACK, side)
+    }
 }
 

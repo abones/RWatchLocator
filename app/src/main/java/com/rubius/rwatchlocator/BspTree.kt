@@ -90,20 +90,16 @@ class BspTree {
             return split
         }
 
-        private fun getFirstX(line: NormalLine, isXPositive: Boolean): Double {
-            return if (isXPositive) line.startX else line.endX
+        private fun isPositive(start: Double, end: Double): Boolean {
+            return end - start >= 0
         }
 
-        private fun getLastX(line: NormalLine, isXPositive: Boolean): Double {
-            return if (isXPositive) line.endX else line.startX
+        private fun getFirstCoordinate(originalStart: Double, originalEnd: Double, isXReferencePositive: Boolean): Double {
+            return if (isXReferencePositive == isPositive(originalStart, originalEnd)) originalStart else originalEnd
         }
 
-        private fun getFirstY(line: NormalLine, isYPositive: Boolean): Double {
-            return if (isYPositive) line.startY else line.endY
-        }
-
-        private fun getLastY(line: NormalLine, isYPositive: Boolean): Double {
-            return if (isYPositive) line.endY else line.startY
+        private fun getLastCoordinate(originalStart: Double, originalEnd: Double, isXReferencePositive: Boolean): Double {
+            return if (isXReferencePositive == isPositive(originalStart, originalEnd)) originalEnd else originalStart
         }
 
         private fun isCoordGreater(x1: Double, x2: Double, isPositiveDirection: Boolean): Boolean {
@@ -114,24 +110,26 @@ class BspTree {
         private fun optimizeLines(split: TreeNode) {
             if (split.lines.size <= 1)
                 return
+
+            val startLine = split.lines[0]
+            val isXPositive = isPositive(startLine.startX, startLine.endX)
+            val isYPositive = isPositive(startLine.startY, startLine.endY)
+
             split.lines.sortWith(compareBy({ it.minX }, { it.minY }))
 
             val result = arrayListOf<NormalLine>()
 
-            val startLine = split.lines[0]
-            var curStartX: Double = startLine.startX // direction for other lines will be lost but this does not matter since split is complete
-            var curStartY: Double = startLine.startY
-            var curEndX: Double = startLine.endX
-            var curEndY: Double = startLine.endY
-
-            val isXPositive = startLine.endX - startLine.startX >= 0
-            val isYPositive = startLine.endY - startLine.startY >= 0
+            val firstLine = split.lines[0]
+            var curStartX: Double = getFirstCoordinate(firstLine.startX, firstLine.endX, isXPositive) // direction for other lines will be lost but this does not matter since split is complete
+            var curStartY: Double = getFirstCoordinate(firstLine.startY, firstLine.endY, isYPositive)
+            var curEndX: Double = getLastCoordinate(firstLine.startX, firstLine.endX, isXPositive)
+            var curEndY: Double = getLastCoordinate(firstLine.startY, firstLine.endY, isYPositive)
             for (lineIndex in 1..(split.lines.size - 1)) {
                 val line = split.lines[lineIndex]
-                val firstX = getFirstX(line, isXPositive)
-                val firstY = getFirstY(line, isYPositive)
-                val lastX = getLastX(line, isXPositive)
-                val lastY = getLastY(line, isYPositive)
+                val firstX = getFirstCoordinate(line.startX, line.endX, isXPositive)
+                val firstY = getFirstCoordinate(line.startY, line.endY, isYPositive)
+                val lastX = getLastCoordinate(line.startX, line.endX, isXPositive)
+                val lastY = getLastCoordinate(line.startY, line.endY, isYPositive)
 
                 if (isCoordGreater(firstX, curEndX, isXPositive) || isCoordGreater(firstY, curEndY, isYPositive)) { // segment ended
                     result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
@@ -197,7 +195,7 @@ class BspTree {
         private fun isInsideConvex(convexLines: ArrayList<NormalLine>, point: Vector): Boolean {
             return convexLines.all {
                 val side = it.getSide(point.x, point.y)
-                side == NormalLine.Side.COLLINEAR || side == NormalLine.Side.FRONT
+                 side == NormalLine.Side.COLLINEAR || side == NormalLine.Side.FRONT
             }
         }
     }
