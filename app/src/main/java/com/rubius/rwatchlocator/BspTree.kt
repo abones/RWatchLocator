@@ -148,23 +148,33 @@ class BspTree {
         }
 
         fun isConvex(lines: List<NormalLine>): Boolean {
-            if (lines.isEmpty())
+            if (lines.isEmpty()) // for our purposes a single line is a convex polygon
                 return false
 
+            var prevLine = lines[0]
             var angleSum = 0.0
-            for (i in 1 until lines.size) {
-                val normal1 = lines[i - 1].normal
-                val normal2 = lines[i].normal
+            var lineIndex = 1
+            while (lineIndex < lines.size) {
+                var curLine = lines[lineIndex]
+
+                val shouldInsertLine = prevLine.endX != curLine.startX || prevLine.endY != curLine.startY
+                if (shouldInsertLine)
+                    curLine = NormalLine(prevLine.endX, prevLine.endY, curLine.startX, curLine.startY)
+
+                val normal1 = prevLine.normal
+                val normal2 = curLine.normal
 
                 val angle = normal1.signedAngleBetween(normal2)
                 if (angle < 0)
                     return false
 
-                //Log.d("TAGG", "Angle between ${lines[i-1]} and ${lines[i]} is ${getAngle(angle)}")
-
                 angleSum += angle
                 if (Math.abs(angleSum) > Math.PI * 2)
                     return false
+
+                prevLine = curLine
+                if (!shouldInsertLine)
+                    ++lineIndex
             }
             return true
         }

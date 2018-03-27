@@ -75,25 +75,14 @@ class BspTreeTest {
     }
 
     @Test
-    fun oneInFrontOfOther() {
-        val result = BspTree.generateBsp(listOf(
-            NormalLine(0.0, 0.0, 1.0, 0.0),
-            NormalLine(0.0, 1.0, 1.0, 1.0)
-        ))
-
-        assertLeaf(result!!)
-        Assert.assertEquals(2, result.convexLines.size)
-    }
-
-    @Test
     fun oneBehindAnother() {
         val result = BspTree.generateBsp(listOf(
             NormalLine(0.0, 1.0, 1.0, 1.0),
             NormalLine(0.0, 0.0, 1.0, 0.0)
         ))
 
-        assertLeaf(result!!)
-        Assert.assertEquals(2, result.convexLines.size)
+        Assert.assertNull(result!!.front)
+        assertLeaf(result.back!!)
     }
 
     @Test
@@ -231,7 +220,7 @@ class BspTreeTest {
 
         val isConvex = BspTree.isConvex(lines)
 
-        Assert.assertTrue(isConvex)
+        Assert.assertFalse(isConvex)
     }
 
     @Test
@@ -244,7 +233,7 @@ class BspTreeTest {
 
         val isConvex = BspTree.isConvex(lines)
 
-        Assert.assertTrue(isConvex)
+        Assert.assertFalse(isConvex)
     }
 
     @Test
@@ -558,5 +547,114 @@ class BspTreeTest {
         val line = result.lines[0]
         Assert.assertEquals(45.0, line.startX)
         Assert.assertEquals(10.0, line.endX)
+    }
+
+    private fun assertNode(node: TreeNode, lineCount: Int, convexLineCount: Int, startX: Double, startY: Double, endX: Double, endY: Double) {
+        Assert.assertEquals(lineCount, node.lines.size)
+        Assert.assertEquals(convexLineCount, node.convexLines.size)
+        val curLine = node.lines[0]
+        Assert.assertEquals(startX, curLine.startX)
+        Assert.assertEquals(startY, curLine.startY)
+        Assert.assertEquals(endX, curLine.endX)
+        Assert.assertEquals(endY, curLine.endY)
+    }
+
+    @Test
+    fun noConvexLinesFromWrongNodes() {
+        val rooms = listOf(
+            Room(
+                "301",
+                listOf(
+                    Point(0.0, 7.0),
+                    Point(4.0, 7.0),
+                    Point(4.0, 14.0),
+                    Point(0.0, 14.0)
+                )
+            ),
+            Room(
+                "302a",
+                listOf(
+                    Point(8.0, 0.0),
+                    Point(10.0, 0.0),
+                    Point(10.0, 5.0),
+                    Point(8.0, 5.0)
+                )
+            ),
+            Room(
+                "302b",
+                listOf(
+                    Point(8.0, 5.0),
+                    Point(10.0, 5.0),
+                    Point(10.0, 7.0),
+                    Point(8.0, 7.0)
+                )
+            ),
+            Room(
+                "303",
+                listOf(
+                    Point(10.0, 0.0),
+                    Point(18.0, 0.0),
+                    Point(18.0, 7.0),
+                    Point(10.0, 7.0)
+                )
+            ),
+            Room(
+                "304a",
+                listOf(
+                    Point(18.0, 0.0),
+                    Point(22.0, 0.0),
+                    Point(22.0, 7.0),
+                    Point(18.0, 7.0)
+                )
+            ),
+            Room(
+                "304",
+                listOf(
+                    Point(22.0, 0.0),
+                    Point(26.0, 0.0),
+                    Point(26.0, 7.0),
+                    Point(22.0, 7.0)
+                )
+            ),
+            Room(
+                "305",
+                listOf(
+                    Point(26.0, 0.0),
+                    Point(30.0, 0.0),
+                    Point(30.0, 7.0),
+                    Point(26.0, 7.0)
+                )
+            )
+        )
+
+        val lines = rooms.flatMap { it.lines }
+
+        val result = BspTree.generateBsp(lines)
+
+        var curNode = result!!
+        assertNode(curNode, 1, 0, 18.0, 0.0, 18.0, 7.0)
+
+        curNode = curNode.front!!
+        assertNode(curNode, 1, 0, 10.0, 5.0, 8.0, 5.0)
+
+        curNode = curNode.back!!
+        assertNode(curNode, 2, 0, 0.0, 7.0, 4.0, 7.0)
+
+        curNode = curNode.back!!
+        assertNode(curNode, 1, 0, 10.0, 5.0, 10.0, 7.0)
+    }
+
+    @Test
+    fun threeParallelLinesAreNotConvex() {
+        val lines = listOf(
+            // room 303
+            NormalLine(10.0, 5.0, 10.0, 7.0),
+            NormalLine(8.0, 7.0, 8.0, 5.0),
+            NormalLine(10.0, 7.0, 10.0, 5.0)
+        )
+
+        val isConvex = BspTree.isConvex(lines)
+
+        Assert.assertFalse(isConvex)
     }
 }
