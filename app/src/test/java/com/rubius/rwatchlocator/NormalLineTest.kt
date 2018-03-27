@@ -208,5 +208,15 @@ class NormalLineTest {
         Assert.assertEquals(NormalLine.Side.COLLINEAR, sideStart)
         Assert.assertEquals(NormalLine.Side.COLLINEAR, sideEnd)
     }
+
+    @Test
+    fun correctSideForPoint() {
+        val line = NormalLine(8.0, 5.0, 10.0, 5.0)
+        val point = Vector(9.0, 8.0)
+
+        val side = line.getSide(point.x, point.y)
+
+        Assert.assertEquals(NormalLine.Side.FRONT, side)
+    }
 }
 

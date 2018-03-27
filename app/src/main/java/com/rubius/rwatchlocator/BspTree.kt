@@ -90,6 +90,27 @@ class BspTree {
             return split
         }
 
+        private fun getFirstX(line: NormalLine, isXPositive: Boolean): Double {
+            return if (isXPositive) line.startX else line.endX
+        }
+
+        private fun getLastX(line: NormalLine, isXPositive: Boolean): Double {
+            return if (isXPositive) line.endX else line.startX
+        }
+
+        private fun getFirstY(line: NormalLine, isYPositive: Boolean): Double {
+            return if (isYPositive) line.startY else line.endY
+        }
+
+        private fun getLastY(line: NormalLine, isYPositive: Boolean): Double {
+            return if (isYPositive) line.endY else line.startY
+        }
+
+        private fun isCoordGreater(x1: Double, x2: Double, isPositiveDirection: Boolean): Boolean {
+            return if (isPositiveDirection) x1 > x2 else x1 < x2
+        }
+
+
         private fun optimizeLines(split: TreeNode) {
             if (split.lines.size <= 1)
                 return
@@ -97,22 +118,30 @@ class BspTree {
 
             val result = arrayListOf<NormalLine>()
 
-            val curLine = split.lines[0]
-            var curStartX: Double = curLine.minX // direction is lost at this point but this does not matter since split is complete
-            var curStartY: Double = curLine.minY
-            var curEndX: Double = curLine.maxX
-            var curEndY: Double = curLine.maxY
+            val startLine = split.lines[0]
+            var curStartX: Double = startLine.startX // direction for other lines will be lost but this does not matter since split is complete
+            var curStartY: Double = startLine.startY
+            var curEndX: Double = startLine.endX
+            var curEndY: Double = startLine.endY
+
+            val isXPositive = startLine.endX - startLine.startX >= 0
+            val isYPositive = startLine.endY - startLine.startY >= 0
             for (lineIndex in 1..(split.lines.size - 1)) {
                 val line = split.lines[lineIndex]
-                if (line.minX > curEndX || line.minY > curEndY) { // segment ended
+                val firstX = getFirstX(line, isXPositive)
+                val firstY = getFirstY(line, isYPositive)
+                val lastX = getLastX(line, isXPositive)
+                val lastY = getLastY(line, isYPositive)
+
+                if (isCoordGreater(firstX, curEndX, isXPositive) || isCoordGreater(firstY, curEndY, isYPositive)) { // segment ended
                     result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
-                    curStartX = line.minX
-                    curStartY = line.minY
+                    curStartX = firstX
+                    curStartY = firstY
                 }
-                if (line.maxX > curEndX)
-                    curEndX = line.maxX
-                if (line.maxY > curEndY)
-                    curEndY = line.maxY
+                if (isCoordGreater(lastX, curEndX, isXPositive))
+                    curEndX = lastX
+                if (isCoordGreater(lastY, curEndY, isYPositive))
+                    curEndY = lastY
             }
             result.add(NormalLine(curStartX, curStartY, curEndX, curEndY))
 

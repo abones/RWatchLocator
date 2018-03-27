@@ -375,7 +375,7 @@ class BspTreeTest {
     }
 
     @Test
-    fun noUnknownRooms() {
+    fun splitRoomInheritsItsParent() {
         val rooms = listOf(
             Room(
                 "301",
@@ -415,5 +415,71 @@ class BspTreeTest {
         Assert.assertEquals(2, problematicNode.convexLines.size)
         Assert.assertNotNull(problematicNode.room)
         Assert.assertSame(problematicNode.room, rooms[1])
+    }
+
+    @Test
+    fun roomsDoNotExtendAboveAndBelow() {
+        val rooms = listOf(
+            Room(
+                "302a",
+                listOf(
+                    Point(8.0, 0.0),
+                    Point(10.0, 0.0),
+                    Point(10.0, 5.0),
+                    Point(8.0, 5.0)
+                )
+            ),
+            Room(
+                "302b",
+                listOf(
+                    Point(8.0, 5.0),
+                    Point(10.0, 5.0),
+                    Point(10.0, 7.0),
+                    Point(8.0, 7.0)
+                )
+            )
+        )
+
+        val lines = rooms.flatMap { it.lines }
+
+        val result = BspTree.generateBsp(lines)
+
+        val leaf = BspTree.getLeaf(result, Vector(9.0, 8.0))
+
+        Assert.assertNull(leaf)
+    }
+
+    @Test
+    fun keepsSplitDirectionWhenOptimizing() {
+        val rooms = listOf(
+            Room(
+                "302a",
+                listOf(
+                    Point(8.0, 0.0),
+                    Point(10.0, 0.0),
+                    Point(10.0, 5.0),
+                    Point(8.0, 5.0)
+                )
+            ),
+            Room(
+                "302b",
+                listOf(
+                    Point(8.0, 5.0),
+                    Point(10.0, 5.0),
+                    Point(10.0, 7.0),
+                    Point(8.0, 7.0)
+                )
+            )
+        )
+
+        val lines = rooms.flatMap { it.lines }
+
+        val result = BspTree.generateBsp(lines)
+
+        val line = result!!.lines[0]
+        Assert.assertEquals(10.0, line.startX)
+        Assert.assertEquals(5.0, line.startY)
+        Assert.assertEquals(8.0, line.endX)
+        Assert.assertEquals(5.0, line.endY)
     }
 }
