@@ -5,7 +5,8 @@ import com.snatik.polygon.Point
 /**
  *
  */
-data class NormalLine(val startX: Double, val startY: Double, val endX: Double, val endY: Double) {
+data class NormalLine(val startX: Double, val startY: Double, val endX: Double, val endY: Double, val room: Room? = null) {
+
     private val lengthX = endX - startX
     private val lengthY = endY - startY
     val length = Math.sqrt(lengthX * lengthX + lengthY * lengthY)

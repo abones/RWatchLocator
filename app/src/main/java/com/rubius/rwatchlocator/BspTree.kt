@@ -68,6 +68,7 @@ class BspTree {
         fun generateBsp(lines: List<NormalLine>): TreeNode? {
             if (isConvex(lines)) {
                 val result = TreeNode()
+                result.room = lines[0].room
                 result.convexLines.addAll(lines)
                 return result
             }
@@ -143,6 +144,32 @@ class BspTree {
 
         private fun getAngle(angle: Double): Double {
             return angle * 180.0 / Math.PI
+        }
+
+        fun getLeaf(node: TreeNode?, point: Vector): TreeNode? {
+            if (node == null)
+                return null
+
+            if (node.convexLines.size > 0)
+                return if (isInsideConvex(node.convexLines, point))
+                    node
+                else
+                    null
+
+            val side = node.lines[0].getSide(point.x, point.y)
+
+            return when (side) {
+                NormalLine.Side.COLLINEAR -> node
+                NormalLine.Side.BACK -> getLeaf(node.back, point)
+                NormalLine.Side.FRONT -> getLeaf(node.front, point)
+            }
+        }
+
+        private fun isInsideConvex(convexLines: ArrayList<NormalLine>, point: Vector): Boolean {
+            return convexLines.all {
+                val side = it.getSide(point.x, point.y)
+                side == NormalLine.Side.COLLINEAR || side == NormalLine.Side.FRONT
+            }
         }
     }
 }

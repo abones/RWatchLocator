@@ -67,6 +67,10 @@ class LocatorView(
 
             val color = colors[level % colors.size]
             drawNodeLines(node.lines, canvas, color)
+
+            if (node.anchorPoints != null)
+                for (anchorPoint in node.anchorPoints!!)
+                    canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
         }
 
         drawNode(canvas, node.front, level + 1)
@@ -110,9 +114,6 @@ class LocatorView(
         canvas.drawLine(0.0f, 0.0f, 0.0f, 1.0f, debugPaint)
 
         drawNode(canvas, database!!.bspRoot, 0)
-
-        for (anchorPoint in database!!.anchorPoints)
-            canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
 
         canvas.restore()
 
@@ -264,7 +265,11 @@ class LocatorView(
 
             val x = screenToWorldX(e.x)
             val y = screenToWorldY(e.y)
-            database?.anchorPoints?.add(AnchorPoint(x.toDouble(), y.toDouble()))
+            val point = Vector(x.toDouble(), y.toDouble())
+
+            val node = BspTree.getLeaf(database?.bspRoot, point)
+            node?.addAnchorPoint(AnchorPoint(point.x, point.y))
+
             invalidate()
         }
     }

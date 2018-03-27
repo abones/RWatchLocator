@@ -16,7 +16,6 @@ class Database {
             bspRoot = generateBsp(value.flatMap { it.lines })
         }
 
-    val anchorPoints = ArrayList<AnchorPoint>()
     var bspRoot: TreeNode? = null
         private set(value) {
             field = value
