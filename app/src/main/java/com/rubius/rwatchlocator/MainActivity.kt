@@ -1,7 +1,12 @@
 package com.rubius.rwatchlocator
 
 import android.app.Activity
+import android.bluetooth.BluetoothManager
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -12,9 +17,12 @@ import android.widget.Toast
 import com.snatik.polygon.Point
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import java.util.concurrent.atomic.AtomicReference
 
 class MainActivity : Activity() {
     val random = Random()
+
+    private var bluetoothLeScanner: BluetoothLeScanner? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -360,20 +368,30 @@ class MainActivity : Activity() {
         locatorView.listener = { scale, translationX, translationY ->
             label.text = "$scale, $translationX, $translationY"
         }
-        locatorView.onPointAdded = { room, _, _ ->
-            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(60, VibrationEffect.DEFAULT_AMPLITUDE))
-            } else {
-                // deprecated in API 26
-                vibrator.vibrate(60)
-            }
-
-            val roomName = if (room == null) "Unknown" else room.name
-            Toast.makeText(this, "Added to room $roomName", Toast.LENGTH_SHORT).show()
-        }
+        locatorView.onPointAdded = ::onPointAdded
         seekBar.setOnSeekBarChangeListener(SeekBarListener(true))
         seekBar2.setOnSeekBarChangeListener(SeekBarListener(false))
+
+        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothAdapter = bluetoothManager.adapter
+        bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+    }
+
+    private fun onPointAdded(room: Room?, x: Double, y: Double): RssiMeasurement? {
+        val rssiMeasurement = getRssiMeasurement() ?: return null
+
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(60, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            // deprecated in API 26
+            vibrator.vibrate(60)
+        }
+
+        val roomName = if (room == null) "Unknown" else room.name
+        Toast.makeText(this, "Added to room $roomName", Toast.LENGTH_SHORT).show()
+
+        return rssiMeasurement
     }
 
     private fun genRooms(maxRooms: Int, maxVerticesPerRoom: Int): List<Room> {
@@ -404,6 +422,56 @@ class MainActivity : Activity() {
         Log.d("TREE", "${prefix}" + "    ".repeat(level) + "${level} ${node.lines.size} ${node.convexLines.size} ${node.frontRoom?.name} ${node.backRoom?.name}")
         printNode("f", node.front, level + 1)
         printNode("b", node.back, level + 1)
+    }
+
+    private val lastRssiMeasurement = AtomicReference<RssiMeasurement?>()
+
+    private fun getRssiMeasurement(): RssiMeasurement? {
+        val result = lastRssiMeasurement.get()
+        if (result == null || (Date().time - result.createdAt.time) > 120 * 1000) {
+            lastRssiMeasurement.set(null)
+            return null
+        }
+        return result
+    }
+
+    private val myScanCallback = MyScanCallback()
+
+    override fun onStart() {
+        super.onStart()
+        val needsPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+        val hasPermission = !needsPermission ||
+            checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission)
+            bluetoothLeScanner?.startScan(myScanCallback)
+        else if (needsPermission)
+            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                0)
+    }
+
+    override fun onStop() {
+        bluetoothLeScanner?.stopScan(myScanCallback)
+        super.onStop()
+    }
+
+    inner class MyScanCallback : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult?) {
+            super.onScanResult(callbackType, result)
+            Log.d("TAGG", "Got single $result")
+        }
+
+        override fun onBatchScanResults(results: MutableList<ScanResult>?) {
+            Log.d("TAGG", "Got batch $results")
+            if (results != null)
+                lastRssiMeasurement.set(RssiMeasurement(Date(), results.map { it.device.address to it.rssi }.toMap()))
+            super.onBatchScanResults(results)
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            lastRssiMeasurement.set(null)
+            super.onScanFailed(errorCode)
+        }
     }
 
     inner class SeekBarListener(private val isMin: Boolean) : SeekBar.OnSeekBarChangeListener {

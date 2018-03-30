@@ -270,7 +270,6 @@ class LocatorView(
             val node = database?.bspRoot?.getLeaf(point)
 
             if (node != null) {
-                node.addAnchorPoint(AnchorPoint(point.x, point.y))
                 val side = node.getSide(point)
                 val room = when (side) {
                     NormalLine.Side.BACK -> node.backRoom
@@ -279,7 +278,9 @@ class LocatorView(
                     null -> null
                 }
 
-                onPointAdded?.invoke(room, point.x, point.y)
+                val rssi = onPointAdded?.invoke(room, point.x, point.y)
+                if (rssi != null)
+                    node.addAnchorPoint(AnchorPoint(point.x, point.y, rssi))
             }
 
             invalidate()
@@ -287,7 +288,7 @@ class LocatorView(
     }
 
     var listener: ((scale: Float, translationX: Float, translationY: Float) -> Unit)? = null
-    var onPointAdded: ((room: Room?, x: Double, y: Double) -> Unit)? = null
+    var onPointAdded: ((room: Room?, x: Double, y: Double) -> RssiMeasurement?)? = null
 }
 
 fun Float.clamp(min: Float, max: Float): Float {
