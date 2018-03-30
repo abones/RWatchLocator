@@ -402,8 +402,8 @@ class BspTreeTest {
         val problematicNode = result!!.back!!.front!!
 
         Assert.assertEquals(2, problematicNode.convexLines.size)
-        Assert.assertNotNull(problematicNode.room)
-        Assert.assertSame(problematicNode.room, rooms[1])
+        Assert.assertNotNull(problematicNode.frontRoom)
+        Assert.assertSame(problematicNode.frontRoom, rooms[1])
     }
 
     @Test
@@ -433,7 +433,7 @@ class BspTreeTest {
 
         val result = BspTree.generateBsp(lines)
 
-        val leaf = BspTree.getLeaf(result!!, Vector(9.0, 8.0))
+        val leaf = result!!.getLeaf(Vector(9.0, 8.0))
 
         Assert.assertNull(leaf)
     }
@@ -472,9 +472,9 @@ class BspTreeTest {
         Assert.assertEquals(5.0, line.endY)
 
         Assert.assertEquals("302a", rooms[0].name)
-        Assert.assertSame(rooms[0], result.front!!.room)
+        Assert.assertSame(rooms[0], result.front!!.frontRoom)
         Assert.assertEquals("302b", rooms[1].name)
-        Assert.assertSame(rooms[1], result.back!!.room)
+        Assert.assertSame(rooms[1], result.back!!.frontRoom)
     }
 
     @Test
@@ -505,15 +505,15 @@ class BspTreeTest {
         val result = BspTree.generateBsp(lines)
 
         val leftPoint = Vector(9.0, 6.0)
-        val leftLeaf = BspTree.getLeaf(result!!, leftPoint)
+        val leftLeaf = result!!.getLeaf(leftPoint)
 
         val rightPoint = Vector(11.0, 5.0)
-        val rightLeaf = BspTree.getLeaf(result!!, rightPoint)
+        val rightLeaf = result.getLeaf(rightPoint)
 
         Assert.assertEquals("302b", rooms[0].name)
-        Assert.assertSame(rooms[0], leftLeaf!!.room)
+        Assert.assertSame(rooms[0], leftLeaf!!.frontRoom)
         Assert.assertEquals("303", rooms[1].name)
-        Assert.assertSame(rooms[1], rightLeaf!!.room)
+        Assert.assertSame(rooms[1], rightLeaf!!.frontRoom)
     }
 
     @Test

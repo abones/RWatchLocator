@@ -9,8 +9,8 @@ class TreeNode {
     var front: TreeNode? = null
     var back: TreeNode? = null
 
-    var roomFront: Room? = null
-    var roomBack: Room? = null
+    var frontRoom: Room? = null
+    var backRoom: Room? = null
 
     val lines = arrayListOf<NormalLine>()
     val convexLines = arrayListOf<NormalLine>()
@@ -31,7 +31,7 @@ class TreeNode {
         }
     }
 
-    fun isConvex(): Boolean = convexLines.size > 0
+    private fun isConvex(): Boolean = convexLines.size > 0
 
     fun getSide(point: Vector): NormalLine.Side? {
         return if (isConvex())

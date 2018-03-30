@@ -401,7 +401,7 @@ class MainActivity : Activity() {
     private fun printNode(prefix: String, node: TreeNode?, level: Int) {
         if (node == null)
             return
-        Log.d("TREE", "${prefix}" + "    ".repeat(level) + "${level} ${node.lines.size} ${node.convexLines.size} ${node.roomFront?.name} ${node.roomBack?.name}")
+        Log.d("TREE", "${prefix}" + "    ".repeat(level) + "${level} ${node.lines.size} ${node.convexLines.size} ${node.frontRoom?.name} ${node.backRoom?.name}")
         printNode("f", node.front, level + 1)
         printNode("b", node.back, level + 1)
     }

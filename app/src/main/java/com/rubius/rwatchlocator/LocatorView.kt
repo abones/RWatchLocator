@@ -273,9 +273,9 @@ class LocatorView(
                 node.addAnchorPoint(AnchorPoint(point.x, point.y))
                 val side = node.getSide(point)
                 val room = when (side) {
-                    NormalLine.Side.BACK -> node.roomBack
-                    NormalLine.Side.COLLINEAR -> node.roomFront
-                    NormalLine.Side.FRONT -> node.roomFront
+                    NormalLine.Side.BACK -> node.backRoom
+                    NormalLine.Side.COLLINEAR -> node.frontRoom
+                    NormalLine.Side.FRONT -> node.frontRoom
                     null -> null
                 }
 

@@ -68,7 +68,7 @@ class BspTree {
         fun generateBsp(lines: List<NormalLine>): TreeNode? {
             if (isConvex(lines)) {
                 val result = TreeNode()
-                result.roomFront = lines[0].room
+                result.frontRoom = lines[0].room
                 result.convexLines.addAll(lines)
                 return result
             }
@@ -124,8 +124,8 @@ class BspTree {
                     break
             }
 
-            split.roomFront = frontRoomLine?.room
-            split.roomBack = backRoomLine?.room
+            split.frontRoom = frontRoomLine?.room
+            split.backRoom = backRoomLine?.room
         }
 
         private fun isPositive(start: Double, end: Double): Boolean {
