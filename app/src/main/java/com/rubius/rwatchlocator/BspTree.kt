@@ -68,14 +68,15 @@ class BspTree {
         fun generateBsp(lines: List<NormalLine>): TreeNode? {
             if (isConvex(lines)) {
                 val result = TreeNode()
-                result.room = lines[0].room
+                result.roomFront = lines[0].room
                 result.convexLines.addAll(lines)
                 return result
             }
 
             val split = getSplittingLine(lines) ?: return null
 
-            split.room = split.lines[0].room
+
+            assignRooms(split)
 
             optimizeLines(split)
 
@@ -90,6 +91,41 @@ class BspTree {
             }
 
             return split
+        }
+
+        private fun assignRooms(split: TreeNode) {
+            val lines = split.lines
+            val frontVector = lines[0].normal
+
+            var frontRoomLine: NormalLine? = null
+            var hasDifferentFrontRooms = false
+            var backRoomLine: NormalLine? = null
+            var hasDifferentBackRooms = false
+            for (line in lines) {
+                if (frontVector.dot(line.normal) == 1.0) {
+                    if (!hasDifferentFrontRooms) {
+                        if (frontRoomLine == null)
+                            frontRoomLine = line
+                        else if (!(frontRoomLine.room === line.room)) {
+                            hasDifferentFrontRooms = true
+                            frontRoomLine = null
+                        }
+                    }
+                } else if (!hasDifferentBackRooms) {
+                    if (backRoomLine == null)
+                        backRoomLine = line
+                    else if (!(backRoomLine.room === line.room)) {
+                        hasDifferentBackRooms = true
+                        backRoomLine = null
+                    }
+                }
+
+                if (hasDifferentFrontRooms && hasDifferentBackRooms)
+                    break
+            }
+
+            split.roomFront = frontRoomLine?.room
+            split.roomBack = backRoomLine?.room
         }
 
         private fun isPositive(start: Double, end: Double): Boolean {
@@ -183,29 +219,6 @@ class BspTree {
 
         private fun getAngle(angle: Double): Double {
             return angle * 180.0 / Math.PI
-        }
-
-        fun getLeaf(node: TreeNode, point: Vector): TreeNode? {
-            if (node.convexLines.size > 0)
-                return if (isInsideConvex(node.convexLines, point))
-                    node
-                else
-                    null
-
-            val side = node.lines[0].getSide(point.x, point.y)
-
-            return when (side) {
-                NormalLine.Side.COLLINEAR -> node
-                NormalLine.Side.BACK -> if (node.back == null) node else getLeaf(node.back!!, point)
-                NormalLine.Side.FRONT -> if (node.front == null) node else getLeaf(node.front!!, point)
-            }
-        }
-
-        private fun isInsideConvex(convexLines: ArrayList<NormalLine>, point: Vector): Boolean {
-            return convexLines.all {
-                val side = it.getSide(point.x, point.y)
-                side == NormalLine.Side.COLLINEAR || side == NormalLine.Side.FRONT
-            }
         }
     }
 }

@@ -21,6 +21,150 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         locatorView.database = Database()
         locatorView.database!!.rooms = listOf(
+            /*Room(
+                "0.0",
+                listOf(
+                    Point(0.0, 0.0),
+                    Point(1.0, 0.0),
+                    Point(1.0, 1.0),
+                    Point(0.0, 1.0)
+                )
+            ),
+            Room(
+                "0.1",
+                listOf(
+                    Point(1.0, 0.0),
+                    Point(2.0, 0.0),
+                    Point(2.0, 1.0),
+                    Point(1.0, 1.0)
+                )
+            ),
+            Room(
+                "0.2",
+                listOf(
+                    Point(2.0, 0.0),
+                    Point(3.0, 0.0),
+                    Point(3.0, 1.0),
+                    Point(2.0, 1.0)
+                )
+            ),
+            Room(
+                "0.3",
+                listOf(
+                    Point(3.0, 0.0),
+                    Point(4.0, 0.0),
+                    Point(4.0, 1.0),
+                    Point(3.0, 1.0)
+                )
+            ),
+            Room(
+                "1.0",
+                listOf(
+                    Point(0.0, 1.0),
+                    Point(1.0, 1.0),
+                    Point(1.0, 2.0),
+                    Point(0.0, 2.0)
+                )
+            ),
+            Room(
+                "1.1",
+                listOf(
+                    Point(1.0, 1.0),
+                    Point(2.0, 1.0),
+                    Point(2.0, 2.0),
+                    Point(1.0, 2.0)
+                )
+            ),
+            Room(
+                "1.2",
+                listOf(
+                    Point(2.0, 1.0),
+                    Point(3.0, 1.0),
+                    Point(3.0, 2.0),
+                    Point(2.0, 2.0)
+                )
+            ),
+            Room(
+                "1.3",
+                listOf(
+                    Point(3.0, 1.0),
+                    Point(4.0, 1.0),
+                    Point(4.0, 2.0),
+                    Point(3.0, 2.0)
+                )
+            ),
+            Room(
+                "2.0",
+                listOf(
+                    Point(0.0, 2.0),
+                    Point(1.0, 2.0),
+                    Point(1.0, 3.0),
+                    Point(0.0, 3.0)
+                )
+            ),
+            Room(
+                "2.1",
+                listOf(
+                    Point(1.0, 2.0),
+                    Point(2.0, 2.0),
+                    Point(2.0, 3.0),
+                    Point(1.0, 3.0)
+                )
+            ),
+            Room(
+                "2.2",
+                listOf(
+                    Point(2.0, 2.0),
+                    Point(3.0, 2.0),
+                    Point(3.0, 3.0),
+                    Point(2.0, 3.0)
+                )
+            ),
+            Room(
+                "2.3",
+                listOf(
+                    Point(3.0, 2.0),
+                    Point(4.0, 2.0),
+                    Point(4.0, 3.0),
+                    Point(3.0, 3.0)
+                )
+            ),
+            Room(
+                "3.0",
+                listOf(
+                    Point(0.0, 3.0),
+                    Point(1.0, 3.0),
+                    Point(1.0, 4.0),
+                    Point(0.0, 4.0)
+                )
+            ),
+            Room(
+                "3.1",
+                listOf(
+                    Point(1.0, 3.0),
+                    Point(2.0, 3.0),
+                    Point(2.0, 4.0),
+                    Point(1.0, 4.0)
+                )
+            ),
+            Room(
+                "3.2",
+                listOf(
+                    Point(2.0, 3.0),
+                    Point(3.0, 3.0),
+                    Point(3.0, 4.0),
+                    Point(2.0, 4.0)
+                )
+            ),
+            Room(
+                "3.3",
+                listOf(
+                    Point(3.0, 3.0),
+                    Point(4.0, 3.0),
+                    Point(4.0, 4.0),
+                    Point(3.0, 4.0)
+                )
+            )*/
             Room(
                 "301",
                 listOf(
@@ -110,16 +254,7 @@ class MainActivity : Activity() {
                     Point(45.0, 11.0),
                     Point(10.0, 11.0)
                 )
-            ),/*
-            Room(
-                "H2",
-                listOf(
-                    Point(10.0, 7.0),
-                    Point(45.0, 7.0),
-                    Point(45.0, 11.0),
-                    Point(10.0, 11.0)
-                )
-            ),*/
+            ),
             Room(
                 "H1",
                 listOf(
@@ -216,8 +351,6 @@ class MainActivity : Activity() {
             )
         )
         //locatorView.database!!.rooms = genRooms(10, 7)
-        for (room in locatorView.database!!.rooms)
-            Log.d("ROOM", "$room")
 
         printNode("r", locatorView.database!!.bspRoot, 0)
 
@@ -268,7 +401,7 @@ class MainActivity : Activity() {
     private fun printNode(prefix: String, node: TreeNode?, level: Int) {
         if (node == null)
             return
-        Log.d("TREE", "${prefix}" + "    ".repeat(level) + "${level} ${node.lines.size} ${node.convexLines.size}")
+        Log.d("TREE", "${prefix}" + "    ".repeat(level) + "${level} ${node.lines.size} ${node.convexLines.size} ${node.roomFront?.name} ${node.roomBack?.name}")
         printNode("f", node.front, level + 1)
         printNode("b", node.back, level + 1)
     }

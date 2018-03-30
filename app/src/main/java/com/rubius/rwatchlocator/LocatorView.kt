@@ -267,11 +267,19 @@ class LocatorView(
             val y = screenToWorldY(e.y)
             val point = Vector(x.toDouble(), y.toDouble())
 
-            val node = BspTree.getLeaf(database?.bspRoot!!, point)
+            val node = database?.bspRoot?.getLeaf(point)
 
             if (node != null) {
                 node.addAnchorPoint(AnchorPoint(point.x, point.y))
-                onPointAdded?.invoke(node.room, point.x, point.y)
+                val side = node.getSide(point)
+                val room = when (side) {
+                    NormalLine.Side.BACK -> node.roomBack
+                    NormalLine.Side.COLLINEAR -> node.roomFront
+                    NormalLine.Side.FRONT -> node.roomFront
+                    null -> null
+                }
+
+                onPointAdded?.invoke(room, point.x, point.y)
             }
 
             invalidate()
