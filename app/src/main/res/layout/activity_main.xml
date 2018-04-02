@@ -36,7 +36,7 @@
         android:layout_marginStart="8dp"
         android:max="10"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/buttonStartScanning"
         app:layout_constraintStart_toEndOf="@+id/buttonReset"/>
 
     <SeekBar
@@ -57,9 +57,22 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Start scanning"
+        android:text="Start"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/seekBar2"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/circle"
+        android:alpha="0.0"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonStartScanning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/buttonStartScanning"/>
 
 </android.support.constraint.ConstraintLayout>

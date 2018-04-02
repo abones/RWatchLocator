@@ -5,9 +5,7 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
+import android.bluetooth.le.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -375,7 +373,10 @@ class MainActivity : Activity() {
         seekBar2.setOnSeekBarChangeListener(SeekBarListener(false))
 
         buttonStartScanning.setOnClickListener {
-            tryStartingScanning(true)
+            if (isScanning)
+                stopScanning()
+            else
+                tryStartingScanning(true)
         }
 
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -449,6 +450,9 @@ class MainActivity : Activity() {
     }
 
     private fun tryStartingScanning(shouldRequest: Boolean) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return
+
         val bluetoothAdapter = bluetoothAdapter
         if (bluetoothAdapter == null) {
             showToast("This device does not have a Bluetooth adapter")
@@ -469,15 +473,34 @@ class MainActivity : Activity() {
         return checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun checkPermissionsAndStartScanning(shouldRequest: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            if (!hasLocationPermission()) {
-                if (shouldRequest)
-                    requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_ALLOW_LOCATION)
-                return
-            }
+    private var isScanning: Boolean = false
+        set(value) {
+            field = value
 
-        bluetoothLeScanner?.startScan(myScanCallback)
+            if (value)
+                buttonStartScanning.text = "Stop"
+            else
+                buttonStartScanning.text = "Start"
+        }
+
+    private fun checkPermissionsAndStartScanning(shouldRequest: Boolean) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return
+
+        if (!hasLocationPermission()) {
+            if (shouldRequest)
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_ALLOW_LOCATION)
+            return
+        }
+
+        isScanning = true
+
+        val scanSettings = ScanSettings.Builder()
+            .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setReportDelay(10000)
+            .build()
+        bluetoothLeScanner?.startScan(listOf<ScanFilter>(), scanSettings, myScanCallback)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -493,8 +516,13 @@ class MainActivity : Activity() {
     }
 
     override fun onStop() {
-        bluetoothLeScanner?.stopScan(myScanCallback)
+        stopScanning()
         super.onStop()
+    }
+
+    private fun stopScanning() {
+        bluetoothLeScanner?.stopScan(myScanCallback)
+        isScanning = false
     }
 
     inner class MyScanCallback : ScanCallback() {
@@ -505,6 +533,7 @@ class MainActivity : Activity() {
 
         override fun onBatchScanResults(results: MutableList<ScanResult>?) {
             Log.d("TAGG", "Got batch $results")
+            blink()
             if (results != null)
                 lastRssiMeasurement.set(RssiMeasurement(Date(), results.map { it.device.address to it.rssi }.toMap()))
             super.onBatchScanResults(results)
@@ -514,6 +543,11 @@ class MainActivity : Activity() {
             lastRssiMeasurement.set(null)
             super.onScanFailed(errorCode)
         }
+    }
+
+    private fun blink() {
+        imageView.alpha = 1.0f
+        imageView.animate().alpha(0.0f).setDuration(800L).start()
     }
 
     inner class SeekBarListener(private val isMin: Boolean) : SeekBar.OnSeekBarChangeListener {
