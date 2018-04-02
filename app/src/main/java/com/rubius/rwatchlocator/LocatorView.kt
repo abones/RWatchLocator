@@ -137,10 +137,10 @@ class LocatorView(
 
     private val roomColors = IdentityHashMap<Room, Int>()
 
-    fun updateRoomColors(newColors: List<Pair<Room, Int>>) {
+    fun updateRoomColors(newColors: Map<Room, Int>) {
         roomColors.clear()
         for (pair in newColors)
-            roomColors[pair.first] = pair.second
+            roomColors[pair.key] = pair.value
         invalidate()
     }
 

@@ -542,7 +542,7 @@ class MainActivity : Activity() {
         val measurement = lastRssiMeasurement.get() ?: return
 
         val roomProbabilities = database.getRoomProbabilities(measurement)
-        val colors = roomProbabilities.map { pair -> Pair(pair.first, Color.argb((pair.second * 255).toInt(), 255, 0, 0)) }
+        val colors = roomProbabilities.mapValues { Color.argb((it.value * 255).toInt(), 255, 0, 0) }
 
         locatorView.updateRoomColors(colors)
     }
