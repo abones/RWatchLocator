@@ -27,16 +27,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/seekBar2"/>
 
-    <TextView
-        android:id="@+id/label"
-        android:layout_width="77dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/seekBar2"/>
-
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="0dp"
@@ -46,7 +36,7 @@
         android:layout_marginStart="8dp"
         android:max="10"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/label"
+        app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintStart_toEndOf="@+id/buttonReset"/>
 
     <SeekBar
@@ -58,8 +48,18 @@
         android:layout_marginStart="8dp"
         android:max="10"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
-        app:layout_constraintEnd_toStartOf="@+id/label"
-        app:layout_constraintStart_toEndOf="@+id/buttonReset"
-        />
+        app:layout_constraintEnd_toStartOf="@+id/buttonStartScanning"
+        app:layout_constraintStart_toEndOf="@+id/buttonReset"/>
+
+    <Button
+        android:id="@+id/buttonStartScanning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Start scanning"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/seekBar2"/>
 
 </android.support.constraint.ConstraintLayout>

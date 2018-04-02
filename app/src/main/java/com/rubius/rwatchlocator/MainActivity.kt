@@ -1,11 +1,15 @@
 package com.rubius.rwatchlocator
 
+import android.Manifest
+import android.annotation.TargetApi
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -23,6 +27,7 @@ class MainActivity : Activity() {
     val random = Random()
 
     private var bluetoothLeScanner: BluetoothLeScanner? = null
+    private var bluetoothAdapter: BluetoothAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -365,16 +370,17 @@ class MainActivity : Activity() {
         buttonReset.setOnClickListener {
             locatorView.reset()
         }
-        locatorView.listener = { scale, translationX, translationY ->
-            label.text = "$scale, $translationX, $translationY"
-        }
         locatorView.onPointAdded = ::onPointAdded
         seekBar.setOnSeekBarChangeListener(SeekBarListener(true))
         seekBar2.setOnSeekBarChangeListener(SeekBarListener(false))
 
+        buttonStartScanning.setOnClickListener {
+            tryStartingScanning(true)
+        }
+
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val bluetoothAdapter = bluetoothManager.adapter
-        bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+        bluetoothAdapter = bluetoothManager.adapter
+        bluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
     }
 
     private fun onPointAdded(room: Room?, x: Double, y: Double): RssiMeasurement? {
@@ -437,17 +443,53 @@ class MainActivity : Activity() {
 
     private val myScanCallback = MyScanCallback()
 
-    override fun onStart() {
-        super.onStart()
-        val needsPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-        val hasPermission = !needsPermission ||
-            checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    companion object {
+        const val REQUEST_ENABLE_BLUETOOTH: Int = 0
+        const val REQUEST_ALLOW_LOCATION: Int = 1
+    }
 
-        if (hasPermission)
-            bluetoothLeScanner?.startScan(myScanCallback)
-        else if (needsPermission)
-            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
-                0)
+    private fun tryStartingScanning(shouldRequest: Boolean) {
+        val bluetoothAdapter = bluetoothAdapter
+        if (bluetoothAdapter == null) {
+            showToast("This device does not have a Bluetooth adapter")
+            return
+        }
+
+        if (!bluetoothAdapter.isEnabled) {
+            if (shouldRequest)
+                startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BLUETOOTH)
+            return
+        }
+
+        checkPermissionsAndStartScanning(true)
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun hasLocationPermission(): Boolean {
+        return checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkPermissionsAndStartScanning(shouldRequest: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            if (!hasLocationPermission()) {
+                if (shouldRequest)
+                    requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_ALLOW_LOCATION)
+                return
+            }
+
+        bluetoothLeScanner?.startScan(myScanCallback)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            REQUEST_ENABLE_BLUETOOTH -> tryStartingScanning(false)
+            REQUEST_ALLOW_LOCATION -> checkPermissionsAndStartScanning(false)
+            else -> super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    private fun showToast(s: String) {
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
     }
 
     override fun onStop() {
