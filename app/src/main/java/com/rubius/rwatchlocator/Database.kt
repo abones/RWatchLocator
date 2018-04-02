@@ -65,16 +65,18 @@ class Database(private val bspTree: IBspTree) {
     fun getRoomProbabilities(measurement: RssiMeasurement): Map<Room, Double> {
         val roomDeltas = IdentityHashMap<Room, Double>()
 
-        var sum = 0.0
         for (anchorPoint in anchorPoints) {
             val delta = getDelta(measurement.devices, anchorPoint.rssi.devices) ?: continue
-
-            sum += delta
 
             val roomDelta = (roomDeltas[anchorPoint.room] ?: 0.0) + delta
             roomDeltas[anchorPoint.room] = roomDelta
         }
 
-        return roomDeltas.mapValues { it.value / sum }
+        var sum = 0.0
+        val filteredRooms = roomDeltas.filter { it.value > 0.1 }
+        for (room in filteredRooms)
+            sum += room.value
+
+        return filteredRooms.mapValues { it.value / sum }
     }
 }
