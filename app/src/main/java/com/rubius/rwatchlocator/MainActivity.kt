@@ -9,6 +9,7 @@ import android.bluetooth.le.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -27,11 +28,12 @@ class MainActivity : Activity() {
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
 
+    private var database: Database = Database()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        locatorView.database = Database()
-        locatorView.database!!.rooms = listOf(
+        database.rooms = listOf(
             /*Room(
                 "0.0",
                 listOf(
@@ -361,9 +363,10 @@ class MainActivity : Activity() {
                 )
             )
         )
-        //locatorView.database!!.rooms = genRooms(10, 7)
+        //database.rooms = genRooms(10, 7)
+        locatorView.database = database
 
-        printNode("r", locatorView.database!!.bspRoot, 0)
+        printNode("r", database.bspRoot, 0)
 
         buttonReset.setOnClickListener {
             locatorView.reset()
@@ -384,7 +387,7 @@ class MainActivity : Activity() {
         bluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
     }
 
-    private fun onPointAdded(room: Room?, x: Double, y: Double): RssiMeasurement? {
+    private fun onPointAdded(room: Room?, x: Double, y: Double): AnchorPoint? {
         val rssiMeasurement = lastRssiMeasurement.get()
         if (rssiMeasurement == null) {
             showToast("No RSSI measurements recorded")
@@ -405,10 +408,18 @@ class MainActivity : Activity() {
             vibrator.vibrate(60)
         }
 
-        val roomName = if (room == null) "Unknown" else room.name
-        showToast("Added ${rssiMeasurement.devices.size} measurements to room $roomName")
+        if (room == null) {
+            showToast("Could not identify room")
+            return null
+        }
 
-        return rssiMeasurement
+        showToast("Added ${rssiMeasurement.devices.size} measurements to room ${room.name}")
+
+        val anchorPoint = AnchorPoint(x, y, rssiMeasurement, room)
+
+        database.addAnchorPoint(anchorPoint)
+
+        return anchorPoint
     }
 
     private fun genRooms(maxRooms: Int, maxVerticesPerRoom: Int): List<Room> {
@@ -526,18 +537,69 @@ class MainActivity : Activity() {
         isScanning = false
     }
 
-    inner class MyScanCallback : ScanCallback() {
-        override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            super.onScanResult(callbackType, result)
-            Log.d("TAGG", "Got single $result")
+    private fun updateRoomColors() {
+        val measurement = lastRssiMeasurement.get() ?: return
+        val roomDeltas = IdentityHashMap<Room, Int>()
+        val newColors = arrayListOf<Pair<Room, Int>>()
+
+        var minDelta = 0
+        var maxDelta = 0
+        for (anchorPoint in database.anchorPoints) {
+            val delta = getDelta(measurement.devices, anchorPoint.rssi.devices)
+
+            if (delta < minDelta)
+                minDelta = delta
+            if (delta > maxDelta)
+                maxDelta = delta
+
+            val roomDelta = (roomDeltas[anchorPoint.room] ?: 0) + delta
+            roomDeltas[anchorPoint.room] = roomDelta
         }
 
+        for (roomDelta in roomDeltas) {
+            val value = roomDelta.value - minDelta / (maxDelta - minDelta)
+            newColors.add(Pair(roomDelta.key, Color.argb(255 * value, 255, 0, 0)))
+        }
+
+        newColors.sortWith(compareByDescending { it.second })
+        locatorView.updateRoomColors(newColors.take(3))
+    }
+
+    private fun getDelta(sample: Map<String, Int>, target: Map<String, Int>): Int {
+        return getLikeness(sample, target) - getUnlikeness(sample, target)
+    }
+
+    private fun getUnlikeness(sample: Map<String, Int>, target: Map<String, Int>): Int {
+        var sum = 0
+        for (targetItem in target.entries) {
+            val address = targetItem.key
+            val existingRssi = sample[address]
+            if (existingRssi == null)
+                sum += 100
+        }
+
+        return sum
+    }
+
+    private fun getLikeness(sample: Map<String, Int>, target: Map<String, Int>): Int {
+        var sum = 0
+        for (measurement in sample.entries) {
+            val address = measurement.key
+            val existingRssi = target[address]
+            if (existingRssi != null)
+                sum += Math.abs(measurement.value - existingRssi)
+        }
+
+        return sum
+    }
+
+    inner class MyScanCallback : ScanCallback() {
         override fun onBatchScanResults(results: MutableList<ScanResult>?) {
-            Log.d("TAGG", "Got batch $results")
-            blink()
             if (results != null) {
+                blink()
                 val measurement = RssiMeasurement(Date(), results.map { it.device.address to it.rssi }.toMap())
                 lastRssiMeasurement.set(measurement)
+                updateRoomColors()
             }
             super.onBatchScanResults(results)
         }

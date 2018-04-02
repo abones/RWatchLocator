@@ -20,4 +20,10 @@ class Database {
         private set(value) {
             field = value
         }
+
+    private val internalAnchorPoints = arrayListOf<AnchorPoint>()
+    val anchorPoints: List<AnchorPoint> = internalAnchorPoints
+    fun addAnchorPoint(anchorPoint: AnchorPoint) {
+        internalAnchorPoints.add(anchorPoint)
+    }
 }

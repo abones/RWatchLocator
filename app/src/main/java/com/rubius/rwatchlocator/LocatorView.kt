@@ -7,6 +7,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import java.util.*
 
 /**
  *
@@ -120,8 +121,33 @@ class LocatorView(
         for (room in database!!.rooms) {
             room.path!!.transform(drawMatrix, drawPath)
             //roomPaint.shader.setLocalMatrix(drawMatrix)
+
+            val color = getRoomColor(room)
+            if (color == null) {
+                roomPaint.color = Color.BLACK
+                roomPaint.style = Paint.Style.STROKE
+            } else {
+                roomPaint.color = color
+                roomPaint.style = Paint.Style.FILL_AND_STROKE
+            }
+
             canvas.drawPath(drawPath, roomPaint)
         }
+    }
+
+    private val roomColors = IdentityHashMap<Room, Int>()
+
+    fun updateRoomColors(newColors: List<Pair<Room, Int>>) {
+        roomColors.clear()
+        for (pair in newColors)
+            roomColors[pair.first] = pair.second
+        invalidate()
+    }
+
+    private fun getRoomColor(room: Room): Int? {
+        if (roomColors.size == 0)
+            return null
+        return roomColors[room]
     }
 
     private fun drawOverlay(canvas: Canvas) {
@@ -278,9 +304,9 @@ class LocatorView(
                     null -> null
                 }
 
-                val rssi = onPointAdded?.invoke(room, point.x, point.y)
-                if (rssi != null)
-                    node.addAnchorPoint(AnchorPoint(point.x, point.y, rssi))
+                val anchorPoint = onPointAdded?.invoke(room, point.x, point.y)
+                if (anchorPoint != null)
+                    node.addAnchorPoint(anchorPoint)
             }
 
             invalidate()
@@ -288,7 +314,7 @@ class LocatorView(
     }
 
     var listener: ((scale: Float, translationX: Float, translationY: Float) -> Unit)? = null
-    var onPointAdded: ((room: Room?, x: Double, y: Double) -> RssiMeasurement?)? = null
+    var onPointAdded: ((room: Room?, x: Double, y: Double) -> AnchorPoint?)? = null
 }
 
 fun Float.clamp(min: Float, max: Float): Float {
