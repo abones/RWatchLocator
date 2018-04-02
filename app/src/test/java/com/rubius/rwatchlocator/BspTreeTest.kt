@@ -7,7 +7,9 @@ import org.junit.Test
 /**
  *
  */
-class BspTreeTest {
+class bspTreeTest {
+    val bspTree = BspTree()
+
     private fun assertLeaf(result: TreeNode) {
         Assert.assertNull(result.front)
         Assert.assertNull(result.back)
@@ -17,7 +19,7 @@ class BspTreeTest {
 
     @Test
     fun emptyListProducesNull() {
-        val result = BspTree.generateBsp(listOf())
+        val result = bspTree.generateBsp(listOf())
 
         Assert.assertNull(result)
     }
@@ -28,7 +30,7 @@ class BspTreeTest {
             NormalLine(0.0, 0.0, 0.0, 1.0)
         )
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         assertLeaf(result!!)
         Assert.assertEquals(1, result.convexLines.size)
@@ -36,7 +38,7 @@ class BspTreeTest {
 
     /*@Test
     fun joinsAdjacentLines() {
-        val result = BspTree.generateBsp(listOf(
+        val result = bspTree.generateBsp(listOf(
             NormalLine(0.0, 2.0, 0.0, 3.0),
             NormalLine(0.0, 0.0, 0.0, 1.0),
             NormalLine(1.0, 0.0, 0.0, 2.0)
@@ -52,7 +54,7 @@ class BspTreeTest {
 
     @Test
     fun convexBelongInOneNode() {
-        val result = BspTree.generateBsp(listOf(
+        val result = bspTree.generateBsp(listOf(
             NormalLine(1.0, 1.0, 0.0, 1.0), // \/ facing each other
             NormalLine(0.0, 1.0, 0.0, 0.0), //
             NormalLine(0.0, 0.0, 1.0, 0.0)  // /\
@@ -64,7 +66,7 @@ class BspTreeTest {
 
     @Test
     fun triangleBelongsInOneNode() {
-        val result = BspTree.generateBsp(listOf(
+        val result = bspTree.generateBsp(listOf(
             NormalLine(0.0, 0.0, 1.0, 0.0),
             NormalLine(1.0, 0.0, 0.0, 1.0),
             NormalLine(0.0, 1.0, 0.0, 0.0)
@@ -76,7 +78,7 @@ class BspTreeTest {
 
     @Test
     fun oneBehindAnother() {
-        val result = BspTree.generateBsp(listOf(
+        val result = bspTree.generateBsp(listOf(
             NormalLine(0.0, 1.0, 1.0, 1.0),
             NormalLine(0.0, 0.0, 1.0, 0.0)
         ))
@@ -87,7 +89,7 @@ class BspTreeTest {
 
     @Test
     fun picksMostBalancedSplit() {
-        val result = BspTree.generateBsp(listOf(
+        val result = bspTree.generateBsp(listOf(
             NormalLine(0.0, -1.0, 0.0, 1.0),
             NormalLine(1.0, -1.0, 1.0, 1.0), // < this one
             NormalLine(2.0, -1.0, 2.0, 1.0),
@@ -111,7 +113,7 @@ class BspTreeTest {
             NormalLine(4.0, 14.0, 4.0, 7.0)
         )
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         Assert.assertEquals(1, result!!.lines.size)
         Assert.assertEquals(0, result.front!!.lines.size)
@@ -142,7 +144,7 @@ class BspTreeTest {
             NormalLine(18.0, 18.0, 18.0, 14.0)
         )
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         Assert.assertEquals(2, result!!.lines.size)
     }
@@ -164,7 +166,7 @@ class BspTreeTest {
             NormalLine(14.0, 18.0, 14.0, 11.0)
         )
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         assertLeaf(result!!.back!!)
 
@@ -193,7 +195,7 @@ class BspTreeTest {
             NormalLine(18.0, 18.0, 18.0, 14.0)
         )
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         Assert.assertEquals(1, result!!.lines.size)
         assertLeaf(result.back!!)
@@ -218,7 +220,7 @@ class BspTreeTest {
             NormalLine(1.0, 0.0, 0.0, 0.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertFalse(isConvex)
     }
@@ -231,7 +233,7 @@ class BspTreeTest {
             NormalLine(0.0, 0.0, 1.0, 0.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertFalse(isConvex)
     }
@@ -244,7 +246,7 @@ class BspTreeTest {
             NormalLine(1.0, 0.0, 0.0, 0.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertFalse(isConvex)
     }
@@ -258,7 +260,7 @@ class BspTreeTest {
             //NormalLine(0.0, 7.0, 6.0, 6.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertFalse(isConvex)
     }
@@ -270,7 +272,7 @@ class BspTreeTest {
             NormalLine(0.0, 0.0, 1.0, 0.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertTrue(isConvex)
     }
@@ -282,7 +284,7 @@ class BspTreeTest {
             NormalLine(1.0, 1.0, 2.0, 1.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertTrue(isConvex)
     }
@@ -299,15 +301,15 @@ class BspTreeTest {
         for (startIndex in 0 until linesFull.size) {
             for (endIndex in startIndex + 1..linesFull.size) {
                 val sublist = linesFull.subList(startIndex, endIndex)
-                val isConvex = BspTree.isConvex(sublist)
+                val isConvex = bspTree.isConvex(sublist)
                 Assert.assertTrue("Sublist $sublist failed", isConvex)
             }
         }
 
-        val isConvexSkip1 = BspTree.isConvex(listOf(line1, line3))
+        val isConvexSkip1 = bspTree.isConvex(listOf(line1, line3))
         Assert.assertTrue(isConvexSkip1)
 
-        //val isConvexSkip2 = BspTree.isConvex(listOf(line1, line4)) // won't work, this is already larger than pi
+        //val isConvexSkip2 = bspTree.isConvex(listOf(line1, line4)) // won't work, this is already larger than pi
         //Assert.assertTrue(isConvexSkip2)
     }
 
@@ -327,7 +329,7 @@ class BspTreeTest {
             NormalLine(2.0, 1.0, 2.0, 0.0)
         )
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         Assert.assertEquals(1, result!!.lines.size)
         Assert.assertEquals(0, result.convexLines.size)
@@ -354,7 +356,7 @@ class BspTreeTest {
             NormalLine(1.0, 6.0, 6.0, 5.0)
         )
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         val line = result!!.lines[0]
         Assert.assertEquals(9.0, line.startX)
@@ -397,7 +399,7 @@ class BspTreeTest {
 
         val lines = rooms.flatMap { it.lines }
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         val problematicNode = result!!.back!!.front!!
 
@@ -431,7 +433,7 @@ class BspTreeTest {
 
         val lines = rooms.flatMap { it.lines }
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         val leaf = result!!.getLeaf(Vector(9.0, 8.0))
 
@@ -463,7 +465,7 @@ class BspTreeTest {
 
         val lines = rooms.flatMap { it.lines }
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         val line = result!!.lines[0]
         Assert.assertEquals(10.0, line.startX)
@@ -502,7 +504,7 @@ class BspTreeTest {
 
         val lines = rooms.flatMap { it.lines }
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         val leftPoint = Vector(9.0, 6.0)
         val leftLeaf = result!!.getLeaf(leftPoint)
@@ -541,7 +543,7 @@ class BspTreeTest {
 
         val lines = rooms.flatMap { it.lines }
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         Assert.assertEquals(1, result!!.lines.size)
         val line = result.lines[0]
@@ -629,7 +631,7 @@ class BspTreeTest {
 
         val lines = rooms.flatMap { it.lines }
 
-        val result = BspTree.generateBsp(lines)
+        val result = bspTree.generateBsp(lines)
 
         var curNode = result!!
         assertNode(curNode, 1, 0, 18.0, 0.0, 18.0, 7.0)
@@ -653,7 +655,7 @@ class BspTreeTest {
             NormalLine(10.0, 7.0, 10.0, 5.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertFalse(isConvex)
     }
@@ -666,7 +668,7 @@ class BspTreeTest {
             NormalLine(10.0, 18.0, 8.0, 18.0)
         )
 
-        val isConvex = BspTree.isConvex(lines)
+        val isConvex = bspTree.isConvex(lines)
 
         Assert.assertFalse(isConvex)
     }

@@ -1,6 +1,5 @@
 package com.rubius.rwatchlocator
 
-import com.snatik.polygon.Point
 import junit.framework.Assert
 import org.junit.Test
 
@@ -8,18 +7,15 @@ import org.junit.Test
  *
  */
 class DatabaseTest {
-    private val database = Database()
-    private val noRooms = listOf<Room>()
-    private val triangle = listOf(
-        Room(
-            "",
-            listOf(
-                Point(0.0, 0.0),
-                Point(0.0, 1.0),
-                Point(1.0, 0.0)
-            )
-        )
-    )
+    class BspTreeFake : IBspTree {
+        override fun generateBsp(lines: List<NormalLine>): TreeNode? {
+            return null
+        }
+    }
+
+    private val bspTreeFake = BspTreeFake()
+
+    private val database = Database(bspTreeFake)
 
     @Test
     fun startsWithoutRooms() {
@@ -39,7 +35,11 @@ class DatabaseTest {
     }
 
     @Test
-    fun triangularRoomCreatesOneNode() {
-        //database.rooms =
+    fun singleBadRoomGetsAllAttention() {
+        /*database.rooms = listOf(
+            Room(
+
+            )
+        )*/
     }
 }

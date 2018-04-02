@@ -49,4 +49,12 @@ class TreeNode {
             NormalLine.Side.FRONT -> if (front == null) this else front!!.getLeaf(point)
         }
     }
+
+    fun placeLine(secondLine: NormalLine, side: NormalLine.Side) {
+        when (side) {
+            NormalLine.Side.FRONT -> pendingFront.add(secondLine)
+            NormalLine.Side.BACK -> pendingBack.add(secondLine)
+            NormalLine.Side.COLLINEAR -> lines.add(secondLine)
+        }
+    }
 }

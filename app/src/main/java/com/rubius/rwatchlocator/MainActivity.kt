@@ -28,7 +28,7 @@ class MainActivity : Activity() {
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
 
-    private var database: Database = Database()
+    private var database: Database = Database(BspTree())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -400,6 +400,11 @@ class MainActivity : Activity() {
             return null
         }
 
+        if (room == null) {
+            showToast("Could not identify room")
+            return null
+        }
+
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(60, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -408,16 +413,12 @@ class MainActivity : Activity() {
             vibrator.vibrate(60)
         }
 
-        if (room == null) {
-            showToast("Could not identify room")
-            return null
-        }
 
         showToast("Added ${rssiMeasurement.devices.size} measurements to room ${room.name}")
 
         val anchorPoint = AnchorPoint(x, y, rssiMeasurement, room)
 
-        database.addAnchorPoint(anchorPoint)
+        database.anchorPoints.add(anchorPoint)
 
         return anchorPoint
     }
@@ -539,58 +540,11 @@ class MainActivity : Activity() {
 
     private fun updateRoomColors() {
         val measurement = lastRssiMeasurement.get() ?: return
-        val roomDeltas = IdentityHashMap<Room, Int>()
-        val newColors = arrayListOf<Pair<Room, Int>>()
 
-        var minDelta = 0
-        var maxDelta = 0
-        for (anchorPoint in database.anchorPoints) {
-            val delta = getDelta(measurement.devices, anchorPoint.rssi.devices)
+        val roomProbabilities = database.getRoomProbabilities(measurement)
+        val colors = roomProbabilities.map { pair -> Pair(pair.first, Color.argb((pair.second * 255).toInt(), 255, 0, 0)) }
 
-            if (delta < minDelta)
-                minDelta = delta
-            if (delta > maxDelta)
-                maxDelta = delta
-
-            val roomDelta = (roomDeltas[anchorPoint.room] ?: 0) + delta
-            roomDeltas[anchorPoint.room] = roomDelta
-        }
-
-        for (roomDelta in roomDeltas) {
-            val value = roomDelta.value - minDelta / (maxDelta - minDelta)
-            newColors.add(Pair(roomDelta.key, Color.argb(255 * value, 255, 0, 0)))
-        }
-
-        newColors.sortWith(compareByDescending { it.second })
-        locatorView.updateRoomColors(newColors.take(3))
-    }
-
-    private fun getDelta(sample: Map<String, Int>, target: Map<String, Int>): Int {
-        return getLikeness(sample, target) - getUnlikeness(sample, target)
-    }
-
-    private fun getUnlikeness(sample: Map<String, Int>, target: Map<String, Int>): Int {
-        var sum = 0
-        for (targetItem in target.entries) {
-            val address = targetItem.key
-            val existingRssi = sample[address]
-            if (existingRssi == null)
-                sum += 100
-        }
-
-        return sum
-    }
-
-    private fun getLikeness(sample: Map<String, Int>, target: Map<String, Int>): Int {
-        var sum = 0
-        for (measurement in sample.entries) {
-            val address = measurement.key
-            val existingRssi = target[address]
-            if (existingRssi != null)
-                sum += Math.abs(measurement.value - existingRssi)
-        }
-
-        return sum
+        locatorView.updateRoomColors(colors)
     }
 
     inner class MyScanCallback : ScanCallback() {

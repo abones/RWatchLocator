@@ -68,11 +68,11 @@ class LocatorView(
 
             val color = colors[level % colors.size]
             drawNodeLines(node.lines, canvas, color)
-
-            if (node.anchorPoints != null)
-                for (anchorPoint in node.anchorPoints!!)
-                    canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
         }
+
+        if (node.anchorPoints != null)
+            for (anchorPoint in node.anchorPoints!!)
+                canvas.drawCircle(anchorPoint.x.toFloat(), anchorPoint.y.toFloat(), 0.5f, circlePaint)
 
         drawNode(canvas, node.front, level + 1)
         drawNode(canvas, node.back, level + 1)
