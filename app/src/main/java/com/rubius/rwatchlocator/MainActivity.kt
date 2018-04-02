@@ -385,7 +385,17 @@ class MainActivity : Activity() {
     }
 
     private fun onPointAdded(room: Room?, x: Double, y: Double): RssiMeasurement? {
-        val rssiMeasurement = getRssiMeasurement() ?: return null
+        val rssiMeasurement = lastRssiMeasurement.get()
+        if (rssiMeasurement == null) {
+            showToast("No RSSI measurements recorded")
+            return null
+        }
+
+        if ((Date().time - rssiMeasurement.createdAt.time) > 120 * 1000) {
+            lastRssiMeasurement.set(null)
+            showToast("RSSI measurement is too old")
+            return null
+        }
 
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -396,7 +406,7 @@ class MainActivity : Activity() {
         }
 
         val roomName = if (room == null) "Unknown" else room.name
-        Toast.makeText(this, "Added to room $roomName", Toast.LENGTH_SHORT).show()
+        showToast("Added ${rssiMeasurement.devices.size} measurements to room $roomName")
 
         return rssiMeasurement
     }
@@ -432,15 +442,6 @@ class MainActivity : Activity() {
     }
 
     private val lastRssiMeasurement = AtomicReference<RssiMeasurement?>()
-
-    private fun getRssiMeasurement(): RssiMeasurement? {
-        val result = lastRssiMeasurement.get()
-        if (result == null || (Date().time - result.createdAt.time) > 120 * 1000) {
-            lastRssiMeasurement.set(null)
-            return null
-        }
-        return result
-    }
 
     private val myScanCallback = MyScanCallback()
 
@@ -534,8 +535,10 @@ class MainActivity : Activity() {
         override fun onBatchScanResults(results: MutableList<ScanResult>?) {
             Log.d("TAGG", "Got batch $results")
             blink()
-            if (results != null)
-                lastRssiMeasurement.set(RssiMeasurement(Date(), results.map { it.device.address to it.rssi }.toMap()))
+            if (results != null) {
+                val measurement = RssiMeasurement(Date(), results.map { it.device.address to it.rssi }.toMap())
+                lastRssiMeasurement.set(measurement)
+            }
             super.onBatchScanResults(results)
         }
 
